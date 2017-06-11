@@ -1,0 +1,31 @@
+.container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  .form {
+    margin-bottom: 40px;
+
+    md-radio-button {
+      margin: 0 20px 10px 0;
+    }
+
+    md-input-container {
+      width: 100%;
+    }
+  }
+
+  .chart {
+    min-height: 400px;
+  }
+
+  .simulation {
+    label {
+      font-size: 16px;
+      padding: 9px 0 0 0;
+    }
+    md-slider {
+      width: 100%;
+      padding: 10px 0;
+    }
+  }
+}

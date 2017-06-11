@@ -1,0 +1,10 @@
+<nav md-tab-nav-bar>
+  <a md-tab-link
+     *ngFor="let item of navigation"
+     [routerLink]="item.link"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive"
+     [ngClass]="{ disabled: item.disabled }">
+    {{item.label}}
+  </a>
+</nav>

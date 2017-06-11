@@ -1,0 +1,76 @@
+@import "styles-variables";
+
+.mat-sidenav-container {
+  height: 100%;
+}
+
+.toolbar {
+
+  .nav-button {
+    margin: 0 10px 0 0;
+  }
+
+  .branding {
+    cursor: pointer;
+    flex: 1 1 auto;
+
+    img {
+      height: 48px;
+      margin: 0 5px 0 0;
+    }
+
+    .name {
+      position: relative;
+      top: 2px;
+    }
+  }
+
+  @media (max-width: map-get($grid-breakpoints, md)) {
+    .branding {
+      text-align: center;
+    }
+  }
+}
+
+.sidenav {
+  width: 250px;
+
+  .branding {
+    height: 64px;
+    padding: 8px 10px;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+
+    img {
+      height: 48px;
+      margin: 0 5px 0 0;
+    }
+
+    .name {
+      position: relative;
+      top: 3px;
+    }
+  }
+
+  @media (max-width: $toolbar-breakpoint) {
+    .branding {
+      padding: 4px 10px;
+      height: 56px;
+    }
+  }
+
+  .mat-nav-list {
+    padding-top: 0;
+  }
+}
+
+.wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1 0 auto;
+}

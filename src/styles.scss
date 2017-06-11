@@ -1,0 +1,32 @@
+@import 'styles-variables';
+
+@import '~bootstrap/scss/bootstrap-reboot';
+@import '~bootstrap/scss/bootstrap-grid';
+@import '~bootstrap/scss/utilities';
+//
+@import 'styles-reset';
+
+@import '~@angular/material/theming';
+
+@include mat-core();
+
+@import 'default-theme.scss';
+
+@import 'styles-reset.scss-theme';
+@import 'app/app.component.scss-theme';
+@import 'app/layout/footer/footer.component.scss-theme';
+@import 'app/shared/sub-navigation/sub-navigation.component.scss-theme';
+@import 'app/calculator/calculator/calculator.component.scss-theme';
+
+@mixin custom-components-theme($theme) {
+  @include styles-reset-theme($theme);
+  @include app-component-theme($theme);
+  @include opt-footer-component-theme($theme);
+  @include opt-calculator-component-theme($theme);
+  @include opt-sub-navigation-component-theme($theme);
+}
+
+.default-theme {
+  @include angular-material-theme($opt-default-theme);
+  @include custom-components-theme($opt-default-theme);
+}

@@ -1,0 +1,89 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 form">
+      <form [formGroup]="parameters">
+        <h3>Option Price Parameters</h3>
+        <br>
+        <div class="row">
+          <div class="col-sm-6">
+            <md-radio-group formControlName="type">
+              <md-radio-button value="call">Call</md-radio-button>
+              <md-radio-button value="put">Put</md-radio-button>
+            </md-radio-group>
+          </div>
+          <div class="col-sm-6">
+            <md-radio-group formControlName="position">
+              <md-radio-button value="buy">Buy</md-radio-button>
+              <md-radio-button value="sell">Sell</md-radio-button>
+            </md-radio-group>
+          </div>
+          <div class="col-sm-6">
+            <md-input-container>
+              <input mdInput formControlName="currentPrice" placeholder="Underlying price">
+            </md-input-container>
+          </div>
+          <div class="col-sm-6">
+            <md-input-container>
+              <input mdInput formControlName="strike" placeholder="Strike">
+            </md-input-container>
+          </div>
+          <div class="col-sm-6">
+            <md-input-container>
+              <input mdInput formControlName="daysToExpiration" placeholder="Days To Expiration">
+            </md-input-container>
+          </div>
+          <div class="col-sm-6">
+            <md-input-container>
+              <input mdInput formControlName="volatility" placeholder="Volatility in %">
+            </md-input-container>
+          </div>
+          <div class="col-sm-6">
+            <md-input-container>
+              <input mdInput formControlName="interestRate" placeholder="Interest rates in %">
+            </md-input-container>
+          </div>
+        </div>
+        <br>
+        <div class="row" *ngIf="chartData">
+          <div class="col-md-12 simulation">
+            <h3>Simulation Controls</h3>
+            <div class="row">
+              <div class="col-6">
+                <label>
+                  {{parameters.getRawValue().daysToExpirationActive}} days to expiration
+                </label>
+              </div>
+              <div class="col-6">
+                <md-slider thumbLabel
+                           min="0"
+                           [max]="parameters.getRawValue().daysToExpiration"
+                           step="1"
+                           formControlName="daysToExpirationActive"
+                          (input)="onSliderUpdate('daysToExpirationActive', $event.value)">
+                </md-slider>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-6 chart">
+      <ngx-charts-line-chart
+        *ngIf="chartData"
+        [results]="chartData"
+        [scheme]="scheme"
+        showSeriesOnHover="false"
+        rangeFillOpacity="0"
+        gradient="false"
+        xAxis="true"
+        yAxis="true"
+        showXAxisLabel="true"
+        showYAxisLabel="true"
+        xAxisLabel="Underlying price"
+        yAxisLabel="Payoff"
+        autoScale="autoScale"
+        roundDomains="true">
+      </ngx-charts-line-chart>
+    </div>
+  </div>
+</div>

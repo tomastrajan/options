@@ -1,0 +1,18 @@
+@import '~@angular/material/theming';
+
+@mixin opt-sub-navigation-component-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $foreground: map-get($theme, foreground);
+  $background: map-get($theme, background);
+
+  .mat-tab-nav-bar {
+    border-bottom: 0;
+  }
+
+  .mat-ink-bar {
+    background-color: mat-color($accent);
+  }
+
+}
+
