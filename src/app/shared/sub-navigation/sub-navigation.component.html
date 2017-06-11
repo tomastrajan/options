@@ -1,4 +1,4 @@
-<nav md-tab-nav-bar>
+<nav md-tab-nav-bar class="hidden-sm-down">
   <a md-tab-link
      *ngFor="let item of navigation"
      [routerLink]="item.link"
@@ -8,3 +8,13 @@
     {{item.label}}
   </a>
 </nav>
+<md-select class="hidden-md-up" placeholder="Section Navigation"
+           color="accent"
+           [ngModel]="activeNavigationItem?.link"
+           (change)="onSelectChange()">
+  <md-option *ngFor="let item of navigation"
+             [value]="item.link"
+             [disabled]="item.disabled">
+    {{item.label}}
+  </md-option>
+</md-select>
