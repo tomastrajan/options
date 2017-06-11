@@ -69,9 +69,8 @@ export class CalculatorComponent implements OnInit {
 
     const series = [];
     for (let price = start; price <= end; price++) {
-      const payoffPrice = this.pricing.priceOption(type, price,
+      const payoffPrice = this.pricing.priceOption(type, price + 0.001,
         strikeVal, 0, volatilityVal, interestRateVal);
-      console.log(currentPriceVal, price, payoffPrice);
       const finalPrice = position === 'buy'
         ? payoffPrice - currentOptionPrice
         : (payoffPrice  * (-1)) + currentOptionPrice;
