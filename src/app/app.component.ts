@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { OverlayContainer } from '@angular/material';
 import { environment } from 'environments/environment';
 
 import { FirebaseService } from '@app/core';
@@ -22,11 +23,14 @@ export class AppComponent implements  OnInit {
 
   constructor(
     private firebase: FirebaseService,
-    private titleService: Title
+    private titleService: Title,
+    private overlayContainer: OverlayContainer
   ) {
     this.titleService.setTitle(environment.appName);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.overlayContainer.themeClass = 'default-theme';
+  }
 
 }
