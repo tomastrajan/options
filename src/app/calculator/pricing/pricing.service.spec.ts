@@ -9,7 +9,18 @@ describe('PricingService', () => {
     });
   });
 
-  it('should be created', inject([PricingService], (service: PricingService) => {
-    expect(service).toBeTruthy();
-  }));
+  it('calculates bsm call', inject([PricingService],
+    (service: PricingService) => {
+      expect(service.bsm('call', 100, 99, 0, 0, 0, 0)).toBe(1);
+      expect(service.bsm('call', 100, 100, 0, 0, 0, 0)).toBe(0);
+      expect(service.bsm('call', 100, 100, 0.25, 0.05, 0, 30 / 365).toFixed(4))
+        .toBe('3.0626');
+    }));
+
+  it('calculates bsm put', inject([PricingService],
+    (service: PricingService) => {
+      expect(service.bsm('put', 100, 101, 0, 0, 0, 0)).toBe(1);
+      expect(service.bsm('put', 100, 100, 0, 0, 0, 0)).toBe(0);
+    }));
+
 });

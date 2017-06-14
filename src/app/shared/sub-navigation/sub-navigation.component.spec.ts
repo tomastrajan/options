@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { SharedModule } from '@app/shared';
 
@@ -11,7 +12,11 @@ describe('SubNavigationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule, RouterTestingModule],
+      imports: [
+        NoopAnimationsModule,
+        SharedModule,
+        RouterTestingModule
+      ],
     })
     .compileComponents();
   }));
