@@ -47,7 +47,7 @@ export class PricingService {
    * @param t time to expiration (% of year as decimal)
    */
   bsm(type: OptionType, s0: number, x: number, v: number, r: number, q: number,
-      t: number): number {
+      t: number): any {
 
     let d1 = (Math.log(s0 / x) + t * (r - q + Math.pow(v, 2) / 2))
       / (v * Math.sqrt(t));
@@ -55,16 +55,41 @@ export class PricingService {
     if (Number.isNaN(d1)) { d1 = Infinity; }
     if (Number.isNaN(d2)) { d2 = Infinity; }
 
+    const eRT = Math.pow(Math.E, -1 * r * t);
+    const eQT = Math.pow(Math.E, -1 * q * t);
+    const eD122 = Math.pow(Math.E, -1 * Math.pow(d1, 2) / 2);
+    const sqrt2PI = Math.sqrt(2 * Math.PI);
+    const gamma = ((eQT * eD122)
+      / (s0 * v * Math.sqrt(t) * sqrt2PI)) || 0;
+    const vega = (s0 * eQT * Math.sqrt(t) * eD122
+      / (sqrt2PI * 100)) || 0;
+
     if (type === 'call') {
-      return s0 * Math.pow(Math.E, -1 * q * t) * this.stdNormCDF(d1)
-        - x * Math.pow(Math.E, -1 * r * t) * this.stdNormCDF(d2);
+      return {
+        price: s0 * eQT * this.SNCDF(d1) - x * eRT * this.SNCDF(d2),
+        delta: (eQT * this.SNCDF(d1)) || 0,
+        rho: ((x * t * eRT * this.SNCDF(d2)) / 100) || 0,
+        theta: ((-((s0 * v * eQT * eD122) / (2 * Math.sqrt(t) * sqrt2PI))
+          - (r * x * eRT * this.SNCDF(d2)) + (q * s0 * eQT * this.SNCDF(d1)))
+          / 365) || 0,
+        gamma,
+        vega
+      }
     } else {
-      return x * Math.pow(Math.E, -1 * r * t) * this.stdNormCDF(-d2)
-        - s0 * Math.pow(Math.E, -1 * q * t) * this.stdNormCDF(-d1)
+      return {
+        price: x * eRT * this.SNCDF(-d2) - s0 * eQT * this.SNCDF(-d1),
+        delta: (eQT * (this.SNCDF(d1) - 1)) || 0,
+        rho: ((x * t * eRT * this.SNCDF(-d2)) / -100) || 0,
+        theta: ((-((s0 * v * eQT * eD122) / (2 * Math.sqrt(t) * sqrt2PI))
+          + (r * x * eRT * this.SNCDF(-d2)) - (q * s0 * eQT * this.SNCDF(-d1)))
+          / 365) || 0,
+        gamma,
+        vega
+      }
     }
   }
 
-  stdNormCDF(x) {
+  SNCDF(x) {
     let probability = 0;
     if (x >= 8) {
       probability = 1;

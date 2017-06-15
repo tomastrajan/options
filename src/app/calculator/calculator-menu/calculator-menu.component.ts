@@ -10,7 +10,6 @@ export class CalculatorMenuComponent {
   navigation = [
     { link: 'option-price', label: 'Option Price' },
     { link: 'implied-volatility', label: 'Implied Volatility', disabled: true },
-    { link: 'greeks', label: 'Greeks', disabled: true },
     { link: 'strategy-builder', label: 'Strategy Builder', disabled: true }
   ];
 

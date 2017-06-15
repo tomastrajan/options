@@ -17,19 +17,24 @@ import { PricingService } from '../pricing/pricing.service';
 export class CalculatorComponent implements OnInit, OnDestroy {
 
   private unsubscribe$: Subject<void> = new Subject<void>();
-  private zoomChangeThresholdMin = 0.11;
 
   Math: Math;
   zoomChangeStep = 0.05;
+  scheme = { domain: ['#aaaaaa', '#039be5', '#000000', '#000000'] };
+  greeks = [
+    { name: 'delta', symbol: 'Δ', color: '#D85434' },
+    { name: 'gamma', symbol: 'Γ', color: '#a1c64e' },
+    { name: 'theta', symbol: 'Θ', color: '#4ab4a3' },
+    { name: 'vega', symbol: '𝜈', color: '#dec454' },
+    { name: 'rho', symbol: 'ρ', color: '#996bca' }
+  ];
+
   parameters: FormGroup;
   chartData: any[] = [];
-  scheme = { domain: ['#aaaaaa', '#039be5', '#111111', '#000000'] };
-  showAdvancedSimulationControls = false;
+  values: any = {};
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private pricing: PricingService
-  ) {
+  constructor(private formBuilder: FormBuilder,
+              private pricing: PricingService) {
     this.Math = Math;
   }
 
@@ -50,20 +55,17 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       dividendsBase: [1, Validators.required],
       dividends: [1],
       range: [0.25],
+      greeks: this.formBuilder.group(this.greeks.reduce((result, greek) => {
+        result[greek.name] = [false];
+        return result;
+      }, {}))
     });
 
     this.parameters.valueChanges
       .takeUntil(this.unsubscribe$)
       .debounceTime(250)
       .filter(CalculatorComponent.areParamsValid)
-      .distinctUntilChanged(CalculatorComponent.areParamsEqual)
-      .subscribe(this.updateChart.bind(this, 0));
-
-    this.parameters.valueChanges
-      .takeUntil(this.unsubscribe$)
-      .debounceTime(250)
-      .filter(CalculatorComponent.areParamsValid)
-      .subscribe(this.updateChart.bind(this, 1));
+      .subscribe(this.updateChart.bind(this));
 
     ['price', 'strike', 'expiration', 'volatility', 'interest', 'dividends']
       .forEach(prop => this.parameters.get(`${prop}Base`).valueChanges
@@ -82,8 +84,8 @@ export class CalculatorComponent implements OnInit, OnDestroy {
           const price = this.parameters.get('price').value;
           const range = this.parameters.get('range').value;
           const strikeDiff = strike >= price
-            ? strike + strike * 0.2
-            : strike - strike * 0.2;
+            ? strike + strike * 0.1
+            : strike - strike * 0.1;
           const ratio = strike >= price
             ? strikeDiff / price
             : price / strikeDiff;
@@ -105,7 +107,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
 
   onZoomClick(zoomChange: number) {
     const range = this.parameters.get('range');
-    if (zoomChange > 0 || range.value > this.zoomChangeThresholdMin) {
+    if (zoomChange > 0 || range.value > 0.11) {
       range.setValue(range.value + zoomChange);
     }
   }
@@ -118,42 +120,77 @@ export class CalculatorComponent implements OnInit, OnDestroy {
         .setValue(params[key]));
   }
 
-  updateChart(index: number, params: any) {
+  updateChart(params: any) {
     const {
       type, position, price = 0, strike = 0, expirationBase = 0, dividends = 0,
       expiration = 0, volatility = 0, interest = 0, range
     } = params;
 
-    console.log.apply(console, arguments);
-
     const priceDiff = price * range;
     const start = Math.max(Math.ceil(price - priceDiff), 0);
     const end = Math.ceil(price + priceDiff);
-    const pricePointDaysToExpiration = index === 0 ? 0 : expiration;
 
-    const currentOptionPrice = this.pricing.priceOption(type, price, strike,
+    const mainResult = this.pricing.priceOption(type, price, strike,
       expirationBase, volatility, interest, dividends);
+    const currentOptionPrice = mainResult.price;
+    this.values = mainResult;
 
-    const series = [];
+    const seriesExpiry = [];
+    const seriesTheo = [];
+    const seriesGreeks = {};
     for (let pricePoint = start; pricePoint <= end; pricePoint++) {
-      const payoffPrice = this.pricing.priceOption(type, pricePoint, strike,
-        pricePointDaysToExpiration, volatility, interest, dividends);
-      const buySellAdjustedPricePoint = position === 'buy'
-        ? payoffPrice - currentOptionPrice
-        : (payoffPrice * (-1)) + currentOptionPrice;
-      series.push({
-        name: pricePoint.toString(),
-        value: buySellAdjustedPricePoint.toFixed(5)
-      });
+      const name = pricePoint.toString();
+
+      const resultExpiry = this.pricing.priceOption(type, pricePoint, strike,
+        0, volatility, interest, dividends);
+      const priceExpiry = position === 'buy'
+        ? resultExpiry.price - currentOptionPrice
+        : (resultExpiry.price * (-1)) + currentOptionPrice;
+      seriesExpiry.push({ name, value: priceExpiry.toFixed(5) });
+
+      const resultTheo = this.pricing.priceOption(type, pricePoint, strike,
+        expiration, volatility, interest, dividends);
+      let priceTheo = position === 'buy'
+        ? resultTheo.price - currentOptionPrice
+        : (resultTheo.price * (-1)) + currentOptionPrice;
+      if ((position === 'buy' && priceExpiry > priceTheo)
+        || (position === 'sell' && priceExpiry < priceTheo)) {
+        priceTheo = priceExpiry
+      }
+      seriesTheo.push({ name, value: priceTheo.toFixed(5) });
+
+      this.greeks
+        .map(greek => greek.name)
+        .filter(greek => this.parameters.getRawValue().greeks[greek])
+        .forEach(greek => {
+          if (!seriesGreeks[greek]) {
+            seriesGreeks[greek] = [];
+          }
+          seriesGreeks[greek].push({ name, value: resultTheo[greek] });
+        });
     }
 
-    const oldChartData = this.chartData;
-    if (index === 0) {
-      this.chartData = [{ name: 'Payoff at expiry', series }];
-      if (oldChartData[1]) { this.chartData.push(oldChartData[1]); }
-    } else if (index === 1) {
-      this.chartData = [{ name: 'Theoretical P&L', series }];
-      if (oldChartData[0]) { this.chartData.unshift(oldChartData[0]); }
+    if (!Object.keys(seriesGreeks).length) {
+      this.chartData = [
+        { name: 'Payoff at expiry', series: seriesExpiry },
+        { name: 'Theoretical P&L', series: seriesTheo }
+      ];
+      this.scheme = { domain: ['#aaaaaa', '#039be5', '#000000', '#000000'] };
+
+    } else {
+      this.chartData = [];
+      const domain = [];
+      this.greeks
+        .filter(greek => this.parameters.getRawValue().greeks[greek.name])
+        .forEach(greek => {
+          this.chartData.push({
+            name: this.capitalize(greek.name),
+            series: seriesGreeks[greek.name]
+          });
+          domain.push(greek.color);
+        });
+      domain.push('#000000', '#000000');
+      this.scheme = { domain };
     }
 
     this.chartData.push({
@@ -163,6 +200,10 @@ export class CalculatorComponent implements OnInit, OnDestroy {
     });
   }
 
+  capitalize(word: string) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  }
+
   static areParamsValid(params: any) {
     const {
       price, strike, expiration, volatility, interest, dividends
@@ -170,18 +211,6 @@ export class CalculatorComponent implements OnInit, OnDestroy {
     return price !== null && strike !== null
       && dividends !== null && expiration !== null
       && volatility !== null && interest !== null;
-  }
-
-  static areParamsEqual(a, b) {
-    return a.type === b.type
-      && a.range === b.range
-      && a.position === b.position
-      && a.price === b.price
-      && a.strike === b.strike
-      && a.volatility === b.volatility
-      && a.interest === b.interest
-      && a.dividends === b.dividends
-      && a.expirationBase === b.expirationBase;
   }
 
 }
