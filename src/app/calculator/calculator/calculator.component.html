@@ -19,7 +19,7 @@
           </div>
           <div class="col-sm-6">
             <md-input-container>
-              <input mdInput formControlName="currentPrice"
+              <input mdInput formControlName="price"
                      placeholder="Underlying price">
             </md-input-container>
           </div>
@@ -56,7 +56,21 @@
         <br>
         <div class="row" *ngIf="chartData">
           <div class="col-md-12 simulation">
-            <h3>Simulation Controls</h3>
+            <h3>
+              <md-icon mdTooltip="Simulated values override entered option price parameters"
+                       mdTooltipPosition="after">
+                info_outline
+              </md-icon>
+              Simulation Controls
+              <md-slide-toggle
+                mdTooltip="Advanced mode enables additional simulation controls"
+                mdTooltipPosition="right"
+                color="accent"
+                [checked]="showAdvancedSimulationControls"
+                (change)="showAdvancedSimulationControls = !showAdvancedSimulationControls">
+                Advanced
+              </md-slide-toggle>
+            </h3>
             <div class="row">
               <div class="col-6">
                 <label>
@@ -74,7 +88,39 @@
                 </md-slider>
               </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="showAdvancedSimulationControls">
+              <div class="col-6">
+                <label>
+                  Price {{parameters.getRawValue().priceActive}}
+                </label>
+              </div>
+              <div class="col-6">
+                <md-slider thumbLabel
+                           [min]="parameters.getRawValue().price * 0.9"
+                           [max]="parameters.getRawValue().price * 1.1"
+                           step="1"
+                           formControlName="priceActive"
+                           (input)="onSliderUpdate('priceActive', $event.value)">
+                </md-slider>
+              </div>
+            </div>
+            <div class="row" *ngIf="showAdvancedSimulationControls">
+              <div class="col-6">
+                <label>
+                  Strike {{parameters.getRawValue().strikeActive}}
+                </label>
+              </div>
+              <div class="col-6">
+                <md-slider thumbLabel
+                           [min]="parameters.getRawValue().strike * 0.9"
+                           [max]="parameters.getRawValue().strike * 1.1"
+                           step="1"
+                           formControlName="strikeActive"
+                           (input)="onSliderUpdate('strikeActive', $event.value)">
+                </md-slider>
+              </div>
+            </div>
+            <div class="row" *ngIf="showAdvancedSimulationControls">
               <div class="col-6">
                 <label>
                   Volatility {{parameters.getRawValue().volatilityActive}}%
@@ -82,11 +128,43 @@
               </div>
               <div class="col-6">
                 <md-slider thumbLabel
-                           min="1"
+                           min="0"
                            [max]="parameters.getRawValue().volatility * 2"
                            step="1"
                            formControlName="volatilityActive"
                            (input)="onSliderUpdate('volatilityActive', $event.value)">
+                </md-slider>
+              </div>
+            </div>
+            <div class="row" *ngIf="showAdvancedSimulationControls">
+              <div class="col-6">
+                <label>
+                  Interest rate {{parameters.getRawValue().interestRateActive}}%
+                </label>
+              </div>
+              <div class="col-6">
+                <md-slider thumbLabel
+                           min="0"
+                           [max]="Math.max(parameters.getRawValue().interestRate * 4, 10)"
+                           step="1"
+                           formControlName="interestRateActive"
+                           (input)="onSliderUpdate('interestRateActive', $event.value)">
+                </md-slider>
+              </div>
+            </div>
+            <div class="row" *ngIf="showAdvancedSimulationControls">
+              <div class="col-6">
+                <label>
+                  Dividend yield {{parameters.getRawValue().dividendYieldActive}}%
+                </label>
+              </div>
+              <div class="col-6">
+                <md-slider thumbLabel
+                           min="0"
+                           [max]="Math.max(parameters.getRawValue().dividendYield * 4, 10)"
+                           step="1"
+                           formControlName="dividendYieldActive"
+                           (input)="onSliderUpdate('dividendYieldActive', $event.value)">
                 </md-slider>
               </div>
             </div>
@@ -95,8 +173,12 @@
       </div>
       <div class="col-md-6 chart-holder">
         <div style="display: inline">
-          <button md-button (click)="onZoomClick(-zoomChangeStep)"><md-icon>zoom_in</md-icon></button>
-          <button md-button (click)="onZoomClick(zoomChangeStep)"><md-icon>zoom_out</md-icon></button>
+          <button md-button (click)="onZoomClick(-zoomChangeStep)">
+            <md-icon>zoom_in</md-icon>
+          </button>
+          <button md-button (click)="onZoomClick(zoomChangeStep)">
+            <md-icon>zoom_out</md-icon>
+          </button>
           <h3>Option Price Chart</h3>
         </div>
         <div class="chart">

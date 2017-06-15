@@ -42,5 +42,14 @@
       width: 100%;
       padding: 10px 0;
     }
+    md-slide-toggle {
+      float: right;
+      position: relative;
+      top: 3px;
+    }
+    md-icon {
+      float: left;
+      margin: 3px 5px 0 0;
+    }
   }
 }

@@ -18,7 +18,9 @@ import {
   MdToolbarModule,
   MdRadioModule,
   MdSliderModule,
-  MdButtonToggleModule
+  MdButtonToggleModule,
+  MdTooltipModule,
+  MdSlideToggleModule
 } from '@angular/material';
 import {
   SubNavigationComponent
@@ -45,7 +47,9 @@ import {
     MdIconModule,
     MdRadioModule,
     MdSliderModule,
-    MdButtonToggleModule
+    MdButtonToggleModule,
+    MdTooltipModule,
+    MdSlideToggleModule
   ],
   declarations: [
     SubNavigationComponent
@@ -71,6 +75,8 @@ import {
     MdRadioModule,
     MdSliderModule,
     MdButtonToggleModule,
+    MdTooltipModule,
+    MdSlideToggleModule,
 
     SubNavigationComponent
   ]
