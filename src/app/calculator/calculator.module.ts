@@ -8,7 +8,9 @@ import { SharedModule } from '@app/shared';
 import { CalculatorRoutingModule } from './calculator-routing.module';
 import { CalculatorComponent } from './calculator/calculator.component';
 import { PricingService } from './pricing/pricing.service';
-import { CalculatorMenuComponent } from './calculator-menu/calculator-menu.component';
+import {
+  CalculatorMenuComponent
+} from './calculator-menu/calculator-menu.component';
 
 @NgModule({
   imports: [
@@ -21,4 +23,4 @@ import { CalculatorMenuComponent } from './calculator-menu/calculator-menu.compo
   declarations: [CalculatorComponent, CalculatorMenuComponent],
   providers: [PricingService]
 })
-export class CalculatorModule { }
+export class CalculatorModule {}

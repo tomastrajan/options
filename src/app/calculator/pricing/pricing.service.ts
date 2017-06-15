@@ -72,7 +72,8 @@ export class PricingService {
       probability = 0;
     } else {
       for (let i = 0; i < 100; i++) {
-        probability += (Math.pow(x, 2 * i + 1) / this.doubleFactorial(2 * i + 1));
+        probability += (Math.pow(x, 2 * i + 1)
+          / this.doubleFactorial(2 * i + 1));
       }
       probability *= Math.pow(Math.E, -0.5 * Math.pow(x, 2));
       probability /= Math.sqrt(2 * Math.PI);
