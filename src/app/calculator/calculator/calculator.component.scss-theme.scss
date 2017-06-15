@@ -11,6 +11,14 @@
     label {
       color: mat-color($foreground, disabled-text);
     }
+
+    md-icon {
+      &.action {
+        &:hover {
+          color: mat-color($accent);
+        }
+      }
+    }
   }
 
 }

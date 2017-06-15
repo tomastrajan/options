@@ -37,18 +37,18 @@ export class CalculatorComponent implements OnInit, OnDestroy {
     this.parameters = this.formBuilder.group({
       type: ['call'],
       position: ['buy'],
-      price: ['100', Validators.required],
-      priceActive: ['100'],
-      strike: ['100', Validators.required],
-      strikeActive: ['100'],
-      daysToExpiration: ['30', Validators.required],
-      daysToExpirationActive: ['30'],
-      volatility: ['25', Validators.required],
-      volatilityActive: ['25'],
-      interestRate: ['1', Validators.required],
-      interestRateActive: ['1'],
-      dividendYield: ['2', Validators.required],
-      dividendYieldActive: ['2'],
+      priceBase: [100, Validators.required],
+      price: [100],
+      strikeBase: [100, Validators.required],
+      strike: [100],
+      expirationBase: [30, Validators.required],
+      expiration: [30],
+      volatilityBase: [25, Validators.required],
+      volatility: [25],
+      interestBase: [5, Validators.required],
+      interest: [5],
+      dividendsBase: [1, Validators.required],
+      dividends: [1],
       range: [0.25],
     });
 
@@ -56,33 +56,30 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       .takeUntil(this.unsubscribe$)
       .debounceTime(250)
       .filter(CalculatorComponent.areParamsValid)
-      .distinctUntilChanged(CalculatorComponent.hasRelevantParamsChanged)
-      .map(CalculatorComponent.transformParams)
-      .subscribe(this.updatePayoffChart.bind(this));
+      .distinctUntilChanged(CalculatorComponent.areParamsEqual)
+      .subscribe(this.updateChart.bind(this, 0));
 
     this.parameters.valueChanges
       .takeUntil(this.unsubscribe$)
       .debounceTime(250)
       .filter(CalculatorComponent.areParamsValid)
-      .map(CalculatorComponent.transformParams)
-      .subscribe(this.updateTheoreticalChart.bind(this));
+      .subscribe(this.updateChart.bind(this, 1));
 
-    ['daysToExpiration', 'volatility', 'strike', 'price', 'interestRate',
-      'dividendYield']
-      .forEach(prop => this.parameters.get(prop).valueChanges
+    ['price', 'strike', 'expiration', 'volatility', 'interest', 'dividends']
+      .forEach(prop => this.parameters.get(`${prop}Base`).valueChanges
         .takeUntil(this.unsubscribe$)
         .subscribe(val => {
-          const control = this.parameters.get(`${prop}Active`);
+          const control = this.parameters.get(prop);
           control.setValue(val);
-          val !== '0' ? control.enable() : control.disable();
+          val !== 0 ? control.enable() : control.disable();
         }));
 
-    ['strikeActive', 'priceActive']
+    ['strike', 'price']
       .forEach(prop => this.parameters.get(prop).valueChanges
         .takeUntil(this.unsubscribe$)
         .subscribe(() => {
-          const strike = parseFloat(this.parameters.get('strikeActive').value);
-          const price = parseFloat(this.parameters.get('priceActive').value);
+          const strike = this.parameters.get('strike').value;
+          const price = this.parameters.get('price').value;
           const range = this.parameters.get('range').value;
           const strikeDiff = strike >= price
             ? strike + strike * 0.2
@@ -113,120 +110,78 @@ export class CalculatorComponent implements OnInit, OnDestroy {
     }
   }
 
-  updatePayoffChart(params: any) {
+  onRestoreClick() {
+    const params = this.parameters.getRawValue();
+    Object.keys(params)
+      .filter(key => key.includes('Base'))
+      .forEach(key => this.parameters.get(key.replace('Base', ''))
+        .setValue(params[key]));
+  }
+
+  updateChart(index: number, params: any) {
     const {
-      type, position, priceVal, start, end, strikeVal,
-      daysToExpirationVal, volatilityVal, interestRateVal, dividendYieldVal
+      type, position, price = 0, strike = 0, expirationBase = 0, dividends = 0,
+      expiration = 0, volatility = 0, interest = 0, range
     } = params;
 
-    const currentOptionPrice = this.pricing.priceOption(type,
-      priceVal, strikeVal, daysToExpirationVal,
-      volatilityVal, interestRateVal, dividendYieldVal);
+    console.log.apply(console, arguments);
+
+    const priceDiff = price * range;
+    const start = Math.max(Math.ceil(price - priceDiff), 0);
+    const end = Math.ceil(price + priceDiff);
+    const pricePointDaysToExpiration = index === 0 ? 0 : expiration;
+
+    const currentOptionPrice = this.pricing.priceOption(type, price, strike,
+      expirationBase, volatility, interest, dividends);
 
     const series = [];
-    for (let price = start; price <= end; price++) {
-      const payoffPrice = this.pricing.priceOption(type, price,
-        strikeVal, 0, volatilityVal, interestRateVal, dividendYieldVal);
-      const finalPrice = position === 'buy'
+    for (let pricePoint = start; pricePoint <= end; pricePoint++) {
+      const payoffPrice = this.pricing.priceOption(type, pricePoint, strike,
+        pricePointDaysToExpiration, volatility, interest, dividends);
+      const buySellAdjustedPricePoint = position === 'buy'
         ? payoffPrice - currentOptionPrice
         : (payoffPrice * (-1)) + currentOptionPrice;
-      series.push({ name: price.toString(), value: finalPrice.toFixed(5) });
+      series.push({
+        name: pricePoint.toString(),
+        value: buySellAdjustedPricePoint.toFixed(5)
+      });
     }
+
     const oldChartData = this.chartData;
-    this.chartData = [
-      { name: 'Payoff at expiry', series },
-    ];
-    if (oldChartData[1]) {
-      this.chartData.push(oldChartData[1]);
+    if (index === 0) {
+      this.chartData = [{ name: 'Payoff at expiry', series }];
+      if (oldChartData[1]) { this.chartData.push(oldChartData[1]); }
+    } else if (index === 1) {
+      this.chartData = [{ name: 'Theoretical P&L', series }];
+      if (oldChartData[0]) { this.chartData.unshift(oldChartData[0]); }
     }
+
     this.chartData.push({
       name: 'X Axis', series: [
         { name: start, value: 0 }, { name: end, value: 0 }
       ]
     });
-  }
-
-  updateTheoreticalChart(params: any) {
-    const {
-      type, position, priceVal, start, end, strikeVal,
-      daysToExpirationVal, daysToExpirationActiveVal, volatilityVal,
-      interestRateVal, dividendYieldVal
-    } = params;
-
-    const currentOptionPrice = this.pricing.priceOption(type,
-      priceVal, strikeVal, daysToExpirationVal, volatilityVal,
-      interestRateVal, dividendYieldVal);
-
-    const series = [];
-    for (let price = start; price <= end; price++) {
-      const payoffPrice = this.pricing.priceOption(type, price,
-        strikeVal, daysToExpirationActiveVal, volatilityVal, interestRateVal,
-        dividendYieldVal);
-      const finalPrice = position === 'buy'
-        ? payoffPrice - currentOptionPrice
-        : (payoffPrice * (-1)) + currentOptionPrice;
-      series.push({ name: price.toString(), value: finalPrice.toFixed(5) });
-    }
-    const oldChartData = this.chartData;
-    this.chartData = [{ name: 'Theoretical P&L', series }];
-    if (oldChartData[0]) {
-      this.chartData.unshift(oldChartData[0]);
-    }
-    this.chartData.push({
-      name: 'X Axis', series: [
-        { name: start, value: 0 }, { name: end, value: 0 }
-      ]
-    });
-  }
-
-  static transformParams(params: any) {
-    const {
-      type, position, priceActive, strikeActive, daysToExpiration,
-      dividendYieldActive, daysToExpirationActive, volatilityActive,
-      interestRateActive, range
-    } = params;
-
-    const strikeVal = parseFloat(strikeActive || 0);
-    const priceVal = parseFloat(priceActive || 0);
-    const priceDiff = priceVal * range;
-    const start = Math.max(Math.ceil(priceVal - priceDiff), 0);
-    const end = Math.ceil(priceVal + priceDiff);
-    const daysToExpirationVal = parseFloat(daysToExpiration || 0);
-    const daysToExpirationActiveVal = parseFloat(daysToExpirationActive || 0);
-    const volatilityVal = parseFloat(volatilityActive || 0);
-    const interestRateVal = parseFloat(interestRateActive || 0);
-    const dividendYieldVal = parseFloat(dividendYieldActive || 0);
-
-    console.log(dividendYieldVal, volatilityVal, interestRateVal,
-      daysToExpirationActiveVal, daysToExpirationVal);
-
-    return {
-      type, position, priceVal, start, end, strikeVal,
-      daysToExpirationVal, daysToExpirationActiveVal, volatilityVal,
-      interestRateVal, dividendYieldVal
-    };
   }
 
   static areParamsValid(params: any) {
     const {
-      type, position, priceActive, strikeActive, daysToExpirationActive,
-      volatilityActive, interestRateActive, dividendYieldActive
+      price, strike, expiration, volatility, interest, dividends
     } = params;
-    return !!(type && position && priceActive !== '' && strikeActive !== ''
-      && dividendYieldActive !== '' && daysToExpirationActive !== ''
-      && volatilityActive !== '' && interestRateActive !== '' );
+    return price !== null && strike !== null
+      && dividends !== null && expiration !== null
+      && volatility !== null && interest !== null;
   }
 
-  static hasRelevantParamsChanged(a, b) {
+  static areParamsEqual(a, b) {
     return a.type === b.type
       && a.range === b.range
       && a.position === b.position
-      && a.priceActive === b.priceActive
-      && a.strikeActive === b.strikeActive
-      && a.volatilityActive === b.volatilityActive
-      && a.interestRateActive === b.interestRateActive
-      && a.dividendYieldActive === b.dividendYieldActive
-      && a.daysToExpiration === b.daysToExpiration;
+      && a.price === b.price
+      && a.strike === b.strike
+      && a.volatility === b.volatility
+      && a.interest === b.interest
+      && a.dividends === b.dividends
+      && a.expirationBase === b.expirationBase;
   }
 
 }

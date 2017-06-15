@@ -19,36 +19,36 @@
           </div>
           <div class="col-sm-6">
             <md-input-container>
-              <input mdInput formControlName="price"
+              <input type="number" mdInput formControlName="priceBase"
                      placeholder="Underlying price">
             </md-input-container>
           </div>
           <div class="col-sm-6">
             <md-input-container>
-              <input mdInput formControlName="strike" placeholder="Strike">
+              <input type="number" mdInput formControlName="strikeBase" placeholder="Strike">
             </md-input-container>
           </div>
           <div class="col-sm-6">
             <md-input-container>
-              <input mdInput formControlName="daysToExpiration"
+              <input type="number" mdInput formControlName="expirationBase"
                      placeholder="Days to expiration">
             </md-input-container>
           </div>
           <div class="col-sm-6">
             <md-input-container>
-              <input mdInput formControlName="volatility"
+              <input type="number" mdInput formControlName="volatilityBase"
                      placeholder="Volatility (% p.a.)">
             </md-input-container>
           </div>
           <div class="col-sm-6">
             <md-input-container>
-              <input mdInput formControlName="interestRate"
+              <input type="number" mdInput formControlName="interestBase"
                      placeholder="Risk-free interest rates (% p.a.)">
             </md-input-container>
           </div>
           <div class="col-sm-6">
             <md-input-container>
-              <input mdInput formControlName="dividendYield"
+              <input type="number" mdInput formControlName="dividendsBase"
                      placeholder="Dividend yield (% p.a.)">
             </md-input-container>
           </div>
@@ -61,109 +61,116 @@
                        mdTooltipPosition="after">
                 info_outline
               </md-icon>
-              Simulation Controls
+              Simulation
               <md-slide-toggle
                 mdTooltip="Advanced mode enables additional simulation controls"
-                mdTooltipPosition="right"
+                mdTooltipPosition="above"
                 color="accent"
                 [checked]="showAdvancedSimulationControls"
                 (change)="showAdvancedSimulationControls = !showAdvancedSimulationControls">
               </md-slide-toggle>
+              <md-icon *ngIf="showAdvancedSimulationControls"
+                       class="action"
+                       mdTooltip="Reset simulation variables"
+                       mdTooltipPosition="above"
+                       (click)="onRestoreClick()">
+                settings_backup_restore
+              </md-icon>
             </h2>
             <div class="row">
               <div class="col-6">
                 <label>
-                  {{parameters.getRawValue().daysToExpirationActive}} days to
+                  {{parameters.getRawValue().expiration}} days to
                   expiration
                 </label>
               </div>
               <div class="col-6">
                 <md-slider thumbLabel
                            min="0"
-                           [max]="parameters.getRawValue().daysToExpiration * 2"
+                           [max]="parameters.getRawValue().expirationBase * 2"
                            step="1"
-                           formControlName="daysToExpirationActive"
-                           (input)="onSliderUpdate('daysToExpirationActive', $event.value)">
+                           formControlName="expiration"
+                           (input)="onSliderUpdate('expiration', $event.value)">
                 </md-slider>
               </div>
             </div>
             <div class="row" *ngIf="showAdvancedSimulationControls">
               <div class="col-6">
                 <label>
-                  Price {{parameters.getRawValue().priceActive}}
+                  Price {{parameters.getRawValue().price}}
                 </label>
               </div>
               <div class="col-6">
                 <md-slider thumbLabel
-                           [min]="parameters.getRawValue().price * 0.9"
-                           [max]="parameters.getRawValue().price * 1.1"
+                           [min]="parameters.getRawValue().priceBase * 0.9"
+                           [max]="parameters.getRawValue().priceBase * 1.1"
                            step="1"
-                           formControlName="priceActive"
-                           (input)="onSliderUpdate('priceActive', $event.value)">
+                           formControlName="price"
+                           (input)="onSliderUpdate('price', $event.value)">
                 </md-slider>
               </div>
             </div>
             <div class="row" *ngIf="showAdvancedSimulationControls">
               <div class="col-6">
                 <label>
-                  Strike {{parameters.getRawValue().strikeActive}}
+                  Strike {{parameters.getRawValue().strike}}
                 </label>
               </div>
               <div class="col-6">
                 <md-slider thumbLabel
-                           [min]="parameters.getRawValue().strike * 0.9"
-                           [max]="parameters.getRawValue().strike * 1.1"
+                           [min]="parameters.getRawValue().strikeBase * 0.9"
+                           [max]="parameters.getRawValue().strikeBase * 1.1"
                            step="1"
-                           formControlName="strikeActive"
-                           (input)="onSliderUpdate('strikeActive', $event.value)">
+                           formControlName="strike"
+                           (input)="onSliderUpdate('strike', $event.value)">
                 </md-slider>
               </div>
             </div>
             <div class="row" *ngIf="showAdvancedSimulationControls">
               <div class="col-6">
                 <label>
-                  Volatility {{parameters.getRawValue().volatilityActive}}%
-                </label>
-              </div>
-              <div class="col-6">
-                <md-slider thumbLabel
-                           min="0"
-                           [max]="parameters.getRawValue().volatility * 2"
-                           step="1"
-                           formControlName="volatilityActive"
-                           (input)="onSliderUpdate('volatilityActive', $event.value)">
-                </md-slider>
-              </div>
-            </div>
-            <div class="row" *ngIf="showAdvancedSimulationControls">
-              <div class="col-6">
-                <label>
-                  Interest rate {{parameters.getRawValue().interestRateActive}}%
+                  Volatility {{parameters.getRawValue().volatility}}%
                 </label>
               </div>
               <div class="col-6">
                 <md-slider thumbLabel
                            min="0"
-                           [max]="Math.max(parameters.getRawValue().interestRate * 4, 10)"
+                           [max]="parameters.getRawValue().volatilityBase * 2"
                            step="1"
-                           formControlName="interestRateActive"
-                           (input)="onSliderUpdate('interestRateActive', $event.value)">
+                           formControlName="volatility"
+                           (input)="onSliderUpdate('volatility', $event.value)">
                 </md-slider>
               </div>
             </div>
             <div class="row" *ngIf="showAdvancedSimulationControls">
               <div class="col-6">
                 <label>
-                  Dividend yield {{parameters.getRawValue().dividendYieldActive}}%
+                  Interest rate {{parameters.getRawValue().interest}}%
                 </label>
               </div>
               <div class="col-6">
                 <md-slider thumbLabel
                            min="0"
-                           [max]="Math.max(parameters.getRawValue().dividendYield * 4, 10)"
+                           [max]="Math.max(parameters.getRawValue().interestBase * 4, 10)"
                            step="1"
-                           formControlName="dividendYieldActive"
-                           (input)="onSliderUpdate('dividendYieldActive', $event.value)">
+                           formControlName="interest"
+                           (input)="onSliderUpdate('interest', $event.value)">
+                </md-slider>
+              </div>
+            </div>
+            <div class="row" *ngIf="showAdvancedSimulationControls">
+              <div class="col-6">
+                <label>
+                  Dividend yield {{parameters.getRawValue().dividends}}%
+                </label>
+              </div>
+              <div class="col-6">
+                <md-slider thumbLabel
+                           min="0"
+                           [max]="Math.max(parameters.getRawValue().dividendsBase * 4, 10)"
+                           step="1"
+                           formControlName="dividends"
+                           (input)="onSliderUpdate('dividends', $event.value)">
                 </md-slider>
               </div>
             </div>

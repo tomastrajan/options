@@ -45,11 +45,17 @@
     md-slide-toggle {
       float: right;
       position: relative;
-      top: 11px;
+      top: 12px;
+      margin: 0 0 0 10px;
     }
     md-icon {
       float: left;
       margin: 7px 5px 0 0;
+
+      &.action {
+        cursor: pointer;
+        float: right;
+      }
     }
   }
 }
