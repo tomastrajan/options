@@ -2,7 +2,7 @@
   <form [formGroup]="parameters">
     <div class="row">
       <div class="col-md-6 form">
-        <h3>Option Price Parameters</h3>
+        <h2>Option Price Parameters</h2>
         <br>
         <div class="row">
           <div class="col-sm-6">
@@ -31,7 +31,7 @@
           <div class="col-sm-6">
             <md-input-container>
               <input mdInput formControlName="daysToExpiration"
-                     placeholder="Days To Expiration">
+                     placeholder="Days to expiration">
             </md-input-container>
           </div>
           <div class="col-sm-6">
@@ -56,7 +56,7 @@
         <br>
         <div class="row" *ngIf="chartData">
           <div class="col-md-12 simulation">
-            <h3>
+            <h2>
               <md-icon mdTooltip="Simulated values override entered option price parameters"
                        mdTooltipPosition="after">
                 info_outline
@@ -68,9 +68,8 @@
                 color="accent"
                 [checked]="showAdvancedSimulationControls"
                 (change)="showAdvancedSimulationControls = !showAdvancedSimulationControls">
-                Advanced
               </md-slide-toggle>
-            </h3>
+            </h2>
             <div class="row">
               <div class="col-6">
                 <label>
@@ -179,7 +178,7 @@
           <button md-button (click)="onZoomClick(zoomChangeStep)">
             <md-icon>zoom_out</md-icon>
           </button>
-          <h3>Option Price Chart</h3>
+          <h2>Option Price Chart</h2>
         </div>
         <div class="chart">
           <ngx-charts-line-chart

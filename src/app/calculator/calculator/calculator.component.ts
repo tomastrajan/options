@@ -72,7 +72,6 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       .forEach(prop => this.parameters.get(prop).valueChanges
         .takeUntil(this.unsubscribe$)
         .subscribe(val => {
-          console.log('CHECK', prop, val);
           const control = this.parameters.get(`${prop}Active`);
           control.setValue(val);
           val !== '0' ? control.enable() : control.disable();
