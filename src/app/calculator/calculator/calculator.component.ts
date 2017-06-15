@@ -186,16 +186,19 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       interestRateActive, range
     } = params;
 
-    const strikeVal = parseFloat(strikeActive);
-    const priceVal = parseFloat(priceActive);
+    const strikeVal = parseFloat(strikeActive || 0);
+    const priceVal = parseFloat(priceActive || 0);
     const priceDiff = priceVal * range;
     const start = Math.max(Math.ceil(priceVal - priceDiff), 0);
     const end = Math.ceil(priceVal + priceDiff);
-    const daysToExpirationVal = parseFloat(daysToExpiration);
-    const daysToExpirationActiveVal = parseFloat(daysToExpirationActive);
-    const volatilityVal = parseFloat(volatilityActive);
-    const interestRateVal = parseFloat(interestRateActive);
-    const dividendYieldVal = parseFloat(dividendYieldActive);
+    const daysToExpirationVal = parseFloat(daysToExpiration || 0);
+    const daysToExpirationActiveVal = parseFloat(daysToExpirationActive || 0);
+    const volatilityVal = parseFloat(volatilityActive || 0);
+    const interestRateVal = parseFloat(interestRateActive || 0);
+    const dividendYieldVal = parseFloat(dividendYieldActive || 0);
+
+    console.log(dividendYieldVal, volatilityVal, interestRateVal,
+      daysToExpirationActiveVal, daysToExpirationVal);
 
     return {
       type, position, priceVal, start, end, strikeVal,
@@ -209,9 +212,9 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       type, position, priceActive, strikeActive, daysToExpirationActive,
       volatilityActive, interestRateActive, dividendYieldActive
     } = params;
-    return !!(type && position && priceActive && strikeActive
-      && dividendYieldActive && daysToExpirationActive !== ''
-      && volatilityActive && interestRateActive );
+    return !!(type && position && priceActive !== '' && strikeActive !== ''
+      && dividendYieldActive !== '' && daysToExpirationActive !== ''
+      && volatilityActive !== '' && interestRateActive !== '' );
   }
 
   static hasRelevantParamsChanged(a, b) {
