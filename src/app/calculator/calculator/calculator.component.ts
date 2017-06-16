@@ -201,7 +201,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
   }
 
   capitalize(word: string) {
-    return word.charAt(0).toUpperCase() + word.slice(1);
+    return word.charAt(0).toUpperCase() + word.substr(1);
   }
 
   static areParamsValid(params: any) {
