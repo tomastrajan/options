@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 import { CoreModule } from '@app/core';
 import { SharedModule } from '@app/shared';
@@ -15,7 +14,6 @@ import {
 @NgModule({
   imports: [
     ReactiveFormsModule,
-    NgxChartsModule,
     CoreModule,
     SharedModule,
     CalculatorRoutingModule

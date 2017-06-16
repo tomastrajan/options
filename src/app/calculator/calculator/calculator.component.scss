@@ -41,9 +41,12 @@
     }
   }
 
-  .chart {
-    min-height: 400px;
-    overflow: hidden;
+  .chart-container {
+    position: relative;
+
+    canvas {
+      user-select: none;
+    }
   }
 
   .simulation {

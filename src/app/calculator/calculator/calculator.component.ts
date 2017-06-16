@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/debounceTime';
@@ -6,6 +12,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/map';
+import * as Chart from 'chart.js';
 
 import { PricingService } from '../pricing/pricing.service';
 
@@ -20,7 +27,6 @@ export class CalculatorComponent implements OnInit, OnDestroy {
 
   Math: Math;
   zoomChangeStep = 0.05;
-  scheme = { domain: ['#aaaaaa', '#039be5', '#000000', '#000000'] };
   greeks = [
     { name: 'delta', symbol: 'Δ', color: '#D85434' },
     { name: 'gamma', symbol: 'Γ', color: '#a1c64e' },
@@ -30,8 +36,10 @@ export class CalculatorComponent implements OnInit, OnDestroy {
   ];
 
   parameters: FormGroup;
-  chartData: any[] = [];
   values: any = {};
+  chart: any;
+
+  @ViewChild('optionChartCanvas') optionChartCanvas: ElementRef;
 
   constructor(private formBuilder: FormBuilder,
               private pricing: PricingService) {
@@ -39,6 +47,96 @@ export class CalculatorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    const greekDatasets = this.greeks.map(greek => {
+      return {
+        label: `${greek.symbol} ${this.capitalize(greek.name)}`,
+        backgroundColor: greek.color,
+        borderColor: greek.color,
+        data: [],
+        yAxisID: 'greeks',
+        pointRadius: 0,
+        pointHitRadius: 5,
+        borderWidth: 1,
+        lineTension: 0,
+        fill: false,
+        hidden: greek.name === 'delta' ? true : false
+      };
+    });
+    this.chart = new Chart(this.optionChartCanvas.nativeElement, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Payoff at expiry',
+            backgroundColor: '#000000',
+            borderColor: '#000000',
+            data: [],
+            yAxisID: 'payoff',
+            pointRadius: 0,
+            pointHitRadius: 5,
+            lineTension: 0,
+            borderWidth: 1,
+            fill: false
+          },
+          {
+            label: 'Theoretical P&L',
+            backgroundColor: '#039be5',
+            borderColor: '#039be5',
+            data: [],
+            yAxisID: 'payoff',
+            pointRadius: 0,
+            pointHitRadius: 5,
+            lineTension: 0,
+            borderWidth: 2,
+            fill: false
+          },
+          ...greekDatasets
+        ]
+
+      },
+      options: {
+        responsive: true,
+        legend: {
+          labels: {
+            filter(item) {
+              return item.datasetIndex > 1;
+            },
+            usePointStyle: true
+          }
+        },
+        tooltips: {
+          mode: 'index',
+          intersect: false
+        },
+        hover: {
+          mode: 'nearest',
+          intersect: true
+        },
+        scales: {
+          yAxes: [
+            {
+              position: 'left',
+              id: 'payoff',
+              scaleLabel: {
+                display: true,
+                labelString: 'Payoff'
+              }
+            },
+            {
+              position: 'right',
+              id: 'greeks',
+              scaleLabel: {
+                display: true,
+                labelString: 'Greeks'
+              },
+              gridLines: { drawOnChartArea: false }
+            }
+          ]
+        }
+      }
+    });
+
     this.parameters = this.formBuilder.group({
       type: ['call'],
       position: ['buy'],
@@ -135,18 +233,46 @@ export class CalculatorComponent implements OnInit, OnDestroy {
     const currentOptionPrice = mainResult.price;
     this.values = mainResult;
 
-    const seriesExpiry = [];
-    const seriesTheo = [];
-    const seriesGreeks = {};
+
+    const { labels, datasets } = this.chart.data;
+
+    const isLabels = labels.length > 0;
+    if (isLabels) {
+      let labelsStart = labels[0];
+      let labelsEnd = labels[labels.length - 1];
+      while (labelsStart < start) {
+        labels.shift();
+        this.chart.update();
+        labelsStart++;
+      }
+      while (labelsStart > start) {
+        labelsStart--;
+        labels.unshift(labelsStart);
+        this.chart.update();
+      }
+      while (labelsEnd > end) {
+        labels.pop();
+        this.chart.update();
+        labelsEnd--
+      }
+      while (labelsEnd < start) {
+        labelsEnd++;
+        labels.unshift(labelsEnd.toString());
+        this.chart.update();
+      }
+    }
+
     for (let pricePoint = start; pricePoint <= end; pricePoint++) {
-      const name = pricePoint.toString();
+      const index = pricePoint - start;
+      if (!isLabels) {
+        labels.push(pricePoint.toString());
+      }
 
       const resultExpiry = this.pricing.priceOption(type, pricePoint, strike,
         0, volatility, interest, dividends);
       const priceExpiry = position === 'buy'
         ? resultExpiry.price - currentOptionPrice
         : (resultExpiry.price * (-1)) + currentOptionPrice;
-      seriesExpiry.push({ name, value: priceExpiry.toFixed(5) });
 
       const resultTheo = this.pricing.priceOption(type, pricePoint, strike,
         expiration, volatility, interest, dividends);
@@ -155,49 +281,20 @@ export class CalculatorComponent implements OnInit, OnDestroy {
         : (resultTheo.price * (-1)) + currentOptionPrice;
       if ((position === 'buy' && priceExpiry > priceTheo)
         || (position === 'sell' && priceExpiry < priceTheo)) {
-        priceTheo = priceExpiry
+        priceTheo = priceExpiry;
       }
-      seriesTheo.push({ name, value: priceTheo.toFixed(5) });
+      const { delta, gamma, theta, vega, rho } = resultTheo;
+      datasets[0].data[index] = priceExpiry.toFixed(5);
+      datasets[1].data[index] = priceTheo.toFixed(5);
+      datasets[2].data[index] = delta.toFixed(5);
+      datasets[3].data[index] = gamma.toFixed(5);
+      datasets[4].data[index] = theta.toFixed(5);
+      datasets[5].data[index] = vega.toFixed(5);
+      datasets[6].data[index] = rho.toFixed(5);
 
-      this.greeks
-        .map(greek => greek.name)
-        .filter(greek => this.parameters.getRawValue().greeks[greek])
-        .forEach(greek => {
-          if (!seriesGreeks[greek]) {
-            seriesGreeks[greek] = [];
-          }
-          seriesGreeks[greek].push({ name, value: resultTheo[greek] });
-        });
+      this.chart.update();
+
     }
-
-    if (!Object.keys(seriesGreeks).length) {
-      this.chartData = [
-        { name: 'Payoff at expiry', series: seriesExpiry },
-        { name: 'Theoretical P&L', series: seriesTheo }
-      ];
-      this.scheme = { domain: ['#aaaaaa', '#039be5', '#000000', '#000000'] };
-
-    } else {
-      this.chartData = [];
-      const domain = [];
-      this.greeks
-        .filter(greek => this.parameters.getRawValue().greeks[greek.name])
-        .forEach(greek => {
-          this.chartData.push({
-            name: this.capitalize(greek.name),
-            series: seriesGreeks[greek.name]
-          });
-          domain.push(greek.color);
-        });
-      domain.push('#000000', '#000000');
-      this.scheme = { domain };
-    }
-
-    this.chartData.push({
-      name: 'X Axis', series: [
-        { name: start, value: 0 }, { name: end, value: 0 }
-      ]
-    });
   }
 
   capitalize(word: string) {

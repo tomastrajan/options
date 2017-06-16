@@ -70,22 +70,3 @@ import 'intl';  // Run `npm install --save intl`.
  * Need to import at least one locale-data with intl.
  */
 import 'intl/locale-data/jsonp/en';
-
-/**
- * ngx-charts
- */
-(function (window: any) {
-  function MouseEvent(eventType, params) {
-    params = params || { bubbles: false, cancelable: false };
-    const mouseEvent = document.createEvent('MouseEvent');
-    mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable,
-      window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    return mouseEvent;
-  }
-  if (!!window.MSInputMethodContext
-    && !!(document as any).documentMode
-    || (document as any).documentMode === 10) {
-    MouseEvent.prototype = Event.prototype;
-    window.MouseEvent = MouseEvent;
-  }
-})(window);
