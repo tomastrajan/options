@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" [@routeAnimation]="routeAnimationState">
   <form [formGroup]="parameters">
     <div class="row">
       <div class="col-md-4 form">
@@ -203,8 +203,8 @@
               {{greek.symbol}}
             </span>
             <div class="label">
-              {{greek.name}}<br>
-              {{values[greek.name.toLowerCase()]}}
+              {{greek.label}}<br>
+              {{values[greek.label.toLowerCase()]}}
             </div>
           </div>
         </div>

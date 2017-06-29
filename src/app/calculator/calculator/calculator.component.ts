@@ -14,25 +14,29 @@ import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/map';
 import * as Chart from 'chart.js';
 
+import { ROUTE_ANIMATION } from '@app/core/animations/route.animation';
+
 import { PricingService } from '../pricing/pricing.service';
 
 @Component({
   selector: 'opt-calculator',
   templateUrl: './calculator.component.html',
-  styleUrls: ['./calculator.component.scss']
+  styleUrls: ['./calculator.component.scss'],
+  animations: [ROUTE_ANIMATION]
 })
 export class CalculatorComponent implements OnInit, OnDestroy {
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
+  routeAnimationState;
   Math: Math;
   zoomChangeStep = 0.05;
   greeks = [
-    { name: 'Delta', symbol: 'Δ', color: '#D85434', hidden: true },
-    { name: 'Gamma', symbol: 'Γ', color: '#a1c64e', hidden: true },
-    { name: 'Vega', symbol: '𝜈', color: '#dec454', hidden: true },
-    { name: 'Rho', symbol: 'ρ', color: '#996bca', hidden: true },
-    { name: 'Theta', symbol: 'Θ', color: '#4ab4a3', hidden: true }
+    { label: 'Delta', symbol: 'Δ', color: '#D85434', hidden: true },
+    { label: 'Gamma', symbol: 'Γ', color: '#a1c64e', hidden: true },
+    { label: 'Vega', symbol: '𝜈', color: '#dec454', hidden: true },
+    { label: 'Rho', symbol: 'ρ', color: '#996bca', hidden: true },
+    { label: 'Theta', symbol: 'Θ', color: '#4ab4a3', hidden: true }
   ];
 
   parameters: FormGroup;
@@ -49,8 +53,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const greekDatasets = this.greeks.map(greek => {
       return {
-        name: greek.name,
-        label: `${greek.symbol} ${greek.name}`,
+        label: greek.label,
         backgroundColor: greek.color,
         borderColor: greek.color,
         data: [],
@@ -100,14 +103,27 @@ export class CalculatorComponent implements OnInit, OnDestroy {
         responsive: true,
         legend: { display: false },
         tooltips: {
-          mode: 'nearest',
-          intersect: false
+          mode: 'index',
+          intersect: false,
+          bodySpacing: 8,
+          titleMarginBottom: 15,
+          position: 'nearest',
+          backgroundColor: 'rgba(0,0,0,0.6)',
+          caretPadding: 10,
+          callbacks: { title: items => `Underlying price: ${items[0].xLabel}` }
         },
         hover: {
           mode: 'index',
           intersect: false
         },
         scales: {
+          xAxes: [{
+            display: true,
+            scaleLabel: {
+              display: true,
+              labelString: 'Underlying price'
+            }
+          }],
           yAxes: [
             {
               position: 'left',
@@ -148,7 +164,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       dividends: [1],
       range: [0.25],
       greeks: this.formBuilder.group(this.greeks.reduce((result, greek) => {
-        result[greek.name] = [false];
+        result[greek.label] = [false];
         return result;
       }, {}))
     });
@@ -198,7 +214,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
   onGreekClick(greek) {
     greek.hidden = !greek.hidden;
     this.chart.data.datasets.some(dataset => {
-      if (dataset.name === greek.name) {
+      if (dataset.label === greek.label) {
         dataset.hidden = greek.hidden;
         return true;
       }

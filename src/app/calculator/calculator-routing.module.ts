@@ -1,10 +1,17 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
+
+import {
+  RouteAnimationGuard
+} from '@app/core/animations/route-animation.guard';
 
 import { CalculatorComponent } from './calculator/calculator.component';
 import {
   CalculatorMenuComponent
 } from './calculator-menu/calculator-menu.component';
+import {
+  ImpliedVolatilityComponent
+} from './implied-volatility/implied-volatility.component';
 
 const routes: Routes = [
   {
@@ -17,7 +24,12 @@ const routes: Routes = [
         pathMatch: 'full',
       },
       {
-        path: 'option-price', component: CalculatorComponent
+        path: 'option-price', component: CalculatorComponent,
+        canDeactivate: [RouteAnimationGuard],
+      },
+      {
+        path: 'implied-volatility', component: ImpliedVolatilityComponent,
+        canDeactivate: [RouteAnimationGuard]
       }
     ]
   }
@@ -27,4 +39,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class CalculatorRoutingModule { }
+export class CalculatorRoutingModule {
+}

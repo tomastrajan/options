@@ -10,6 +10,9 @@ import { PricingService } from './pricing/pricing.service';
 import {
   CalculatorMenuComponent
 } from './calculator-menu/calculator-menu.component';
+import {
+  ImpliedVolatilityComponent
+} from './implied-volatility/implied-volatility.component';
 
 @NgModule({
   imports: [
@@ -18,7 +21,11 @@ import {
     SharedModule,
     CalculatorRoutingModule
   ],
-  declarations: [CalculatorComponent, CalculatorMenuComponent],
+  declarations: [
+    CalculatorComponent,
+    CalculatorMenuComponent,
+    ImpliedVolatilityComponent
+  ],
   providers: [PricingService]
 })
 export class CalculatorModule {}

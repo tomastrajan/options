@@ -1,22 +1,22 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AboutComponent } from './about.component';
+import { ImpliedVolatilityComponent } from './implied-volatility.component';
 
-describe('AboutComponent', () => {
-  let component: AboutComponent;
-  let fixture: ComponentFixture<AboutComponent>;
+describe('ImpliedVolatilityComponent', () => {
+  let component: ImpliedVolatilityComponent;
+  let fixture: ComponentFixture<ImpliedVolatilityComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule],
-      declarations: [AboutComponent]
+      declarations: [ImpliedVolatilityComponent]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AboutComponent);
+    fixture = TestBed.createComponent(ImpliedVolatilityComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

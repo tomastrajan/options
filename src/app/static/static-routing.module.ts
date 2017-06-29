@@ -1,14 +1,23 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
+
+import {
+  RouteAnimationGuard
+} from '@app/core/animations/route-animation.guard';
 
 import { AboutComponent } from './about/about.component';
 
 const routes: Routes = [
-  { path: 'about', component: AboutComponent }
+  {
+    path: 'about',
+    component: AboutComponent,
+    canDeactivate: [RouteAnimationGuard]
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class StaticRoutingModule { }
+export class StaticRoutingModule {
+}
