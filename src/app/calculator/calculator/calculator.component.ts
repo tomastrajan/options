@@ -28,11 +28,11 @@ export class CalculatorComponent implements OnInit, OnDestroy {
   Math: Math;
   zoomChangeStep = 0.05;
   greeks = [
-    { name: 'delta', symbol: 'Δ', color: '#D85434' },
-    { name: 'gamma', symbol: 'Γ', color: '#a1c64e' },
-    { name: 'theta', symbol: 'Θ', color: '#4ab4a3' },
-    { name: 'vega', symbol: '𝜈', color: '#dec454' },
-    { name: 'rho', symbol: 'ρ', color: '#996bca' }
+    { name: 'Delta', symbol: 'Δ', color: '#D85434', hidden: true },
+    { name: 'Gamma', symbol: 'Γ', color: '#a1c64e', hidden: true },
+    { name: 'Vega', symbol: '𝜈', color: '#dec454', hidden: true },
+    { name: 'Rho', symbol: 'ρ', color: '#996bca', hidden: true },
+    { name: 'Theta', symbol: 'Θ', color: '#4ab4a3', hidden: true }
   ];
 
   parameters: FormGroup;
@@ -49,7 +49,8 @@ export class CalculatorComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const greekDatasets = this.greeks.map(greek => {
       return {
-        label: `${greek.symbol} ${this.capitalize(greek.name)}`,
+        name: greek.name,
+        label: `${greek.symbol} ${greek.name}`,
         backgroundColor: greek.color,
         borderColor: greek.color,
         data: [],
@@ -59,7 +60,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
         borderWidth: 1,
         lineTension: 0,
         fill: false,
-        hidden: greek.name === 'delta' ? true : false
+        hidden: greek.hidden
       };
     });
     this.chart = new Chart(this.optionChartCanvas.nativeElement, {
@@ -76,7 +77,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
             pointRadius: 0,
             pointHitRadius: 5,
             lineTension: 0,
-            borderWidth: 1,
+            borderWidth: 2,
             fill: false
           },
           {
@@ -97,21 +98,14 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       },
       options: {
         responsive: true,
-        legend: {
-          labels: {
-            filter(item) {
-              return item.datasetIndex > 1;
-            },
-            usePointStyle: true
-          }
-        },
+        legend: { display: false },
         tooltips: {
-          mode: 'index',
+          mode: 'nearest',
           intersect: false
         },
         hover: {
-          mode: 'nearest',
-          intersect: true
+          mode: 'index',
+          intersect: false
         },
         scales: {
           yAxes: [
@@ -174,23 +168,6 @@ export class CalculatorComponent implements OnInit, OnDestroy {
           val !== 0 ? control.enable() : control.disable();
         }));
 
-    ['strike', 'price']
-      .forEach(prop => this.parameters.get(prop).valueChanges
-        .takeUntil(this.unsubscribe$)
-        .subscribe(() => {
-          const strike = this.parameters.get('strike').value;
-          const price = this.parameters.get('price').value;
-          const range = this.parameters.get('range').value;
-          const strikeDiff = strike >= price
-            ? strike + strike * 0.1
-            : strike - strike * 0.1;
-          const ratio = strike >= price
-            ? strikeDiff / price
-            : price / strikeDiff;
-          this.parameters.get('range').setValue(Math.min(ratio - 1, 1));
-        }));
-
-
     this.parameters.updateValueAndValidity();
   }
 
@@ -218,20 +195,35 @@ export class CalculatorComponent implements OnInit, OnDestroy {
         .setValue(params[key]));
   }
 
+  onGreekClick(greek) {
+    greek.hidden = !greek.hidden;
+    this.chart.data.datasets.some(dataset => {
+      if (dataset.name === greek.name) {
+        dataset.hidden = greek.hidden;
+        return true;
+      }
+      return false;
+    });
+    this.chart.update();
+  }
+
   updateChart(params: any) {
     const {
       type, position, price = 0, strike = 0, expirationBase = 0, dividends = 0,
       expiration = 0, volatility = 0, interest = 0, range
     } = params;
 
-    const priceDiff = price * range;
-    const start = Math.max(Math.ceil(price - priceDiff), 0);
-    const end = Math.ceil(price + priceDiff);
+    const strikeDiff = strike * range;
+    const start = Math.max(Math.ceil(strike - strikeDiff), 0);
+    const end = Math.ceil(strike + strikeDiff);
 
     const mainResult = this.pricing.priceOption(type, price, strike,
       expirationBase, volatility, interest, dividends);
     const currentOptionPrice = mainResult.price;
-    this.values = mainResult;
+    this.values = Object.keys(mainResult).reduce((result, key) => {
+      result[key] = mainResult[key].toFixed(5);
+      return result;
+    }, {});
 
 
     const { labels, datasets } = this.chart.data;
@@ -242,6 +234,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       let labelsEnd = labels[labels.length - 1];
       while (labelsStart < start) {
         labels.shift();
+        datasets.forEach(dataset => dataset.data.shift());
         this.chart.update();
         labelsStart++;
       }
@@ -252,12 +245,13 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       }
       while (labelsEnd > end) {
         labels.pop();
+        datasets.forEach(dataset => dataset.data.pop());
         this.chart.update();
         labelsEnd--
       }
-      while (labelsEnd < start) {
+      while (labelsEnd < end) {
         labelsEnd++;
-        labels.unshift(labelsEnd.toString());
+        labels.push(labelsEnd.toString());
         this.chart.update();
       }
     }
@@ -295,10 +289,6 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       this.chart.update();
 
     }
-  }
-
-  capitalize(word: string) {
-    return word.charAt(0).toUpperCase() + word.substr(1);
   }
 
   static areParamsValid(params: any) {
