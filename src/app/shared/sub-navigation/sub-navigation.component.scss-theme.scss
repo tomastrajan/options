@@ -19,5 +19,18 @@
     background-color: mat-color($accent);
   }
 
+  .badge {
+    color: mat-color($accent, default-contrast);
+    background-color: mat-color($accent);
+  }
+
+  .disabled {
+    .badge {
+      color: mat-color($accent, default-contrast);
+      background-color: mat-color($foreground, disabled-text);
+    }
+  }
+
+
 }
 

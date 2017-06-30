@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 
@@ -17,7 +17,8 @@ export class SubNavigationComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -35,8 +36,9 @@ export class SubNavigationComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  onSelectChange() {
-    this.router.navigate([this.activeNavigationItem.link])
+  onSelectChange(item) {
+    this.activeNavigationItem = item;
+    this.router.navigate([item.link], { relativeTo: this.activatedRoute });
   }
 
 }
@@ -45,4 +47,5 @@ export interface Navigation {
   link: string;
   label: string;
   disabled?: boolean;
+  badge?: string;
 }

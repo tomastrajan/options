@@ -5,15 +5,15 @@
      routerLinkActive #rla="routerLinkActive"
      [active]="rla.isActive"
      [ngClass]="{ disabled: item.disabled }">
-    {{item.label}}
+    {{item.label}} <span *ngIf="item.badge" class="badge">{{item.badge}}</span>
   </a>
 </nav>
 <md-select class="hidden-md-up" placeholder="Section Navigation"
            color="accent"
-           [ngModel]="activeNavigationItem?.link"
-           (change)="onSelectChange()">
+           [ngModel]="activeNavigationItem"
+           (change)="onSelectChange($event.value)">
   <md-option *ngFor="let item of navigation"
-             [value]="item.link"
+             [value]="item"
              [disabled]="item.disabled">
     {{item.label}}
   </md-option>
