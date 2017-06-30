@@ -1,0 +1,27 @@
+.container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  h2 {
+    span {
+      font-weight: 400;
+    }
+  }
+
+  .form {
+
+    md-radio-button {
+      margin: 0 20px 30px 0;
+    }
+
+    md-input-container {
+      width: 100%;
+    }
+
+    md-slider {
+      width: 100%;
+      position: relative;
+      top: 15px;
+    }
+  }
+}
