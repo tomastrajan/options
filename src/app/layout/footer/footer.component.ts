@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { environment } from 'environments/environment';
+import { version } from '../../../../package.json';
 
 @Component({
   selector: 'opt-footer',
@@ -8,6 +9,7 @@ import { environment } from 'environments/environment';
 })
 export class FooterComponent {
 
+  version = version;
   appName = environment.appName;
   year = new Date().getFullYear();
 
