@@ -5,7 +5,9 @@
       <div class="col-md-12">
         <h2>
           Implied Volatility
-          <span *ngIf="impliedVolatility">{{impliedVolatility.toFixed(2)}} %</span>
+          <span class="implied-volatility" *ngIf="impliedVolatility">
+            {{impliedVolatility.toFixed(2)}} %
+          </span>
         </h2>
         <br>
       </div>

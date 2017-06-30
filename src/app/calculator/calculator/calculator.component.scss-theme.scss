@@ -7,6 +7,10 @@
   $background: map-get($theme, background);
 
 
+  .option-price {
+    color: mat-color($accent);
+  }
+
   .simulation {
     label {
       color: mat-color($foreground, disabled-text);

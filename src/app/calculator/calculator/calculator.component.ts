@@ -244,8 +244,8 @@ export class CalculatorComponent implements OnInit, OnDestroy {
 
     const { labels, datasets } = this.chart.data;
 
-    const isLabels = labels.length > 0;
-    if (isLabels) {
+    const isInitialized = labels.length > 0;
+    if (isInitialized) {
       let labelsStart = labels[0];
       let labelsEnd = labels[labels.length - 1];
       while (labelsStart < start) {
@@ -257,6 +257,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       while (labelsStart > start) {
         labelsStart--;
         labels.unshift(labelsStart);
+        datasets.forEach(({ data }) => data.unshift(data[0]));
         this.chart.update();
       }
       while (labelsEnd > end) {
@@ -268,15 +269,23 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       while (labelsEnd < end) {
         labelsEnd++;
         labels.push(labelsEnd.toString());
+        datasets.forEach(({ data }) => data.push(data[data.length - 1]));
         this.chart.update();
       }
     }
 
+    if (!isInitialized) {
+      for (let pricePoint = start; pricePoint <= end; pricePoint++) {
+        labels.push(pricePoint.toString());
+        const index = pricePoint - start;
+        datasets[0].data[index] = '0';
+        datasets[1].data[index] = '0';
+      }
+      this.chart.update();
+    }
+
     for (let pricePoint = start; pricePoint <= end; pricePoint++) {
       const index = pricePoint - start;
-      if (!isLabels) {
-        labels.push(pricePoint.toString());
-      }
 
       const resultExpiry = this.pricing.priceOption(type, pricePoint, strike,
         0, volatility, interest, dividends);
@@ -303,7 +312,6 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       datasets[6].data[index] = rho.toFixed(5);
 
       this.chart.update();
-
     }
   }
 

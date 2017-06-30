@@ -1,9 +1,13 @@
 <div class="container" [@routeAnimation]="routeAnimationState">
   <form [formGroup]="parameters">
+
     <div class="row">
+
       <div class="col-md-4 form">
+
         <h2>Option Price Parameters</h2>
         <br>
+
         <div class="row">
           <div class="col-sm-6">
             <md-radio-group formControlName="type">
@@ -54,7 +58,9 @@
             </md-input-container>
           </div>
         </div>
+
         <br>
+
         <div class="row">
           <div class="col-md-12 simulation">
             <h2>
@@ -185,7 +191,10 @@
             </div>
           </div>
         </div>
+
+
       </div>
+
       <div class="col-md-8 chart-holder">
         <div style="display: inline">
           <button md-button (click)="onZoomClick(-zoomChangeStep)">
@@ -194,7 +203,11 @@
           <button md-button (click)="onZoomClick(zoomChangeStep)">
             <md-icon>zoom_out</md-icon>
           </button>
-          <h2>Option Price <span>{{values.price}}</span></h2>
+          <h2>Option Price
+            <span class="option-price" *ngIf="values.price">
+              {{values.price}}
+            </span>
+          </h2>
         </div>
         <div class="greeks clearfix">
           <div class="greek" *ngFor="let greek of greeks"
@@ -213,5 +226,6 @@
         </div>
       </div>
     </div>
+
   </form>
 </div>
