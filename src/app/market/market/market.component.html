@@ -17,10 +17,12 @@
                    placeholder="Company name">
           </md-input-container>
           <md-autocomplete #auto="mdAutocomplete">
-            <md-option *ngFor="let result of queryResults"
+            <md-option *ngFor="let result of queryResults" class="underlying-holder"
+                       title="{{result.name}}"
                        (onSelectionChange)="onSymbolSelect(result.symbol)"
                        [value]="result.symbol">
-              {{ result.name }} - {{result.exchDisp}}
+              <span class="underlying-label">{{ result.name }}</span>
+              <small class="underlying-meta">{{ result.symbol }}, {{result.exchDisp}}</small>
             </md-option>
           </md-autocomplete>
           <br>
@@ -40,13 +42,16 @@
       <div class="row" *ngIf="result">
         <div class="col-12">
           <h2>
-            {{result.underlyingSymbol}} - {{result.quote.longName}}
-            {{result.quote.ask}} {{result.quote.currency}}
-            <span [ngClass]="{ negative: result.quote.regularMarketChange < 0 }">
-              {{result.quote?.regularMarketChange.toFixed(2)}}
-            </span>
-            <span  [ngClass]="{ negative: result.quote.regularMarketChangePercent < 0 }">
-              ({{result.quote?.regularMarketChangePercent.toFixed(2)}})
+            {{result.underlyingSymbol}}, {{result.quote.longName}}
+            <span class="price-info">
+              <strong>{{result.quote.ask || result.quote.postMarketPrice}}</strong>
+              {{result.quote.currency}}
+              <span [ngClass]="{ negative: result.quote.regularMarketChange < 0 }">
+                {{result.quote?.regularMarketChange.toFixed(2)}}
+              </span>
+              <span  [ngClass]="{ negative: result.quote.regularMarketChangePercent < 0 }">
+                ({{result.quote?.regularMarketChangePercent.toFixed(2)}})
+              </span>
             </span>
           </h2>
         </div>
@@ -65,7 +70,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of result.options[0]?.calls.reverse()">
+              <tr *ngFor="let item of result.options[0]?.calls">
                 <td>{{item.contractSymbol}}</td>
                 <td class="text-right">{{item.strike}}</td>
                 <td class="text-right">{{item.bid}}</td>

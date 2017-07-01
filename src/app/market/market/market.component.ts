@@ -43,14 +43,26 @@ export class MarketComponent implements OnInit, OnDestroy {
     this.result = null;
     this.loading = true;
     this.yahooService.getOptionChains(symbol)
-      .do(x => console.log(x))
-      .subscribe(res => this.result = res, () => {},
-        () => this.loading = false);
+      .subscribe(res => {
+        this.result = res;
+        if (this.result.options[0]) {
+          this.result.options[0].calls.reverse();
+          this.result.options[0].calls.forEach(i =>
+            i.expiration = MarketComponent.timestampToDateString(i.expiration));
+          this.result.options[0].puts.forEach(i =>
+            i.expiration = MarketComponent.timestampToDateString(i.expiration));
+        }
+      }, () => {}, () => this.loading = false);
   }
 
   ngOnDestroy(): void {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+  }
+
+  static timestampToDateString(timestamp: number) {
+    const date = new Date(timestamp * 1000);
+    return `${date.getDate()}. ${date.getMonth() + 1}. ${date.getFullYear()}`
   }
 
 }

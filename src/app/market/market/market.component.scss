@@ -6,8 +6,9 @@
       width: 100%
     }
     md-autocomplete {
-      width: 100%
+      width: 100%;
     }
+
   }
 
   .results {
@@ -20,5 +21,25 @@
     md-spinner {
       margin: auto;
     }
+
+    .price-info {
+      padding: 0 0 0 20px;
+      white-space: nowrap;
+    }
+  }
+}
+
+.underlying-holder {
+  position: relative;
+
+  .underlying-label {
+    position: relative;
+    top: -7px;
+  }
+
+  .underlying-meta {
+    position: absolute;
+    left: 17px;
+    top: 12px;
   }
 }
