@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/tomastrajan/options/compare/v1.0.0...v1.1.0) (2017-07-01)
+
+
+### Features
+
+* market module ([030846a](https://github.com/tomastrajan/options/commit/030846a))
+* show version number in footer ([602cbc3](https://github.com/tomastrajan/options/commit/602cbc3))
+
+
+
 <a name="1.0.0"></a>
 # 1.0.0 (2017-06-30)
 
