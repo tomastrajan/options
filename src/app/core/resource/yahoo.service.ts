@@ -5,7 +5,7 @@ import 'rxjs/add/operator/map';
 
 const API_OPTIONS = 'https://crossorigin.me/'
   + 'https://query2.finance.yahoo.com/v7/finance/options/';
-const API_SYMBOL = 'http://autoc.finance.yahoo.com/' +
+const API_SYMBOL = 'https://autoc.finance.yahoo.com/' +
   'autoc?query=';
 const API_SYMBOL_SUFFIX = '&region=US&lang=en&callback=JSONP_CALLBACK';
 
