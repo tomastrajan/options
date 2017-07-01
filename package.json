@@ -13,7 +13,8 @@
     "clean": "rm -rf ./public/",
     "build:prod": "ng build --target production --vendor-chunk",
     "server": "cd public && live-server --port=8080 --entry-file=./index.html",
-    "prod": "npm run clean && npm run lint && ng test --single-run && npm run build:prod && npm run server"
+    "prod": "npm run clean && npm run lint && ng test --single-run && npm run build:prod && npm run server",
+    "release": "standard-version && git push --follow-tags origin master"
   },
   "private": true,
   "dependencies": {
