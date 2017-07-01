@@ -7,6 +7,9 @@ const routes: Routes = [
     redirectTo: 'about',
     pathMatch: 'full'
   }, {
+    path: 'market',
+    loadChildren: 'app/market/market.module#MarketModule',
+  }, {
     path: 'calculators',
     loadChildren: 'app/calculator/calculator.module#CalculatorModule',
   }, {

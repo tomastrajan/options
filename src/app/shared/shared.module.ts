@@ -20,6 +20,7 @@ import {
   MdSliderModule,
   MdButtonToggleModule,
   MdTooltipModule,
+  MdAutocompleteModule,
   MdSlideToggleModule
 } from '@angular/material';
 import {
@@ -49,6 +50,7 @@ import {
     MdSliderModule,
     MdButtonToggleModule,
     MdTooltipModule,
+    MdAutocompleteModule,
     MdSlideToggleModule
   ],
   declarations: [
@@ -76,6 +78,7 @@ import {
     MdSliderModule,
     MdButtonToggleModule,
     MdTooltipModule,
+    MdAutocompleteModule,
     MdSlideToggleModule,
 
     SubNavigationComponent

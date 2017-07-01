@@ -1,0 +1,24 @@
+.container {
+  padding-top: 20px;
+
+  .query {
+    md-input-container {
+      width: 100%
+    }
+    md-autocomplete {
+      width: 100%
+    }
+  }
+
+  .results {
+
+    small {
+      position: relative;
+      top: 22px;
+    }
+
+    md-spinner {
+      margin: auto;
+    }
+  }
+}

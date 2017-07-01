@@ -1,9 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import {
-  RouteAnimationGuard
-} from '@app/core/animations/route-animation.guard';
+import { RouteAnimationGuard } from '@app/core';
 
 import { CalculatorComponent } from './calculator/calculator.component';
 import {

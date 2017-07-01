@@ -184,7 +184,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
           val !== 0 ? control.enable() : control.disable();
         }));
 
-    this.parameters.updateValueAndValidity();
+    setTimeout(() => this.parameters.updateValueAndValidity(), 500);
   }
 
   ngOnDestroy(): void {

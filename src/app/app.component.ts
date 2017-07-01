@@ -18,6 +18,7 @@ export class AppComponent implements  OnInit {
 
   navigation = [
     { link: 'about', label: 'About' },
+    { link: 'market', label: 'Market' },
     { link: 'calculators', label: 'Calculators' }
   ];
 

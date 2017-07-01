@@ -1,0 +1,112 @@
+<div class="container" [@routeAnimation]="routeAnimationState">
+
+  <div class="row">
+
+    <div class="col-md-3 col-lg-4 query">
+      <div class="row">
+        <div class="col-12">
+          <h2>UNDERLYING SEARCH</h2>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <md-input-container>
+            <i class="fa fa-search" mdSuffix></i>
+            <input type="text" mdInput [formControl]="query" [mdAutocomplete]="auto"
+                   placeholder="Company name">
+          </md-input-container>
+          <md-autocomplete #auto="mdAutocomplete">
+            <md-option *ngFor="let result of queryResults"
+                       (onSelectionChange)="onSymbolSelect(result.symbol)"
+                       [value]="result.symbol">
+              {{ result.name }} - {{result.exchDisp}}
+            </md-option>
+          </md-autocomplete>
+          <br>
+          <br>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-9 col-lg-8 results">
+      <div class="row" *ngIf="!result">
+        <div class="col-12">
+          <h2>RESULTS</h2>
+          <small *ngIf="!loading">No results, search for some underlying first...</small>
+          <md-spinner *ngIf="loading"></md-spinner>
+        </div>
+      </div>
+      <div class="row" *ngIf="result">
+        <div class="col-12">
+          <h2>
+            {{result.underlyingSymbol}} - {{result.quote.longName}}
+            {{result.quote.ask}} {{result.quote.currency}}
+            <span [ngClass]="{ negative: result.quote.regularMarketChange < 0 }">
+              {{result.quote?.regularMarketChange.toFixed(2)}}
+            </span>
+            <span  [ngClass]="{ negative: result.quote.regularMarketChangePercent < 0 }">
+              ({{result.quote?.regularMarketChangePercent.toFixed(2)}})
+            </span>
+          </h2>
+        </div>
+        <div class="col-12">
+          <h2>Calls</h2>
+          <table class="table table-hover table-sm">
+            <thead>
+              <tr>
+                <td>Symbol</td>
+                <td class="text-right">Strike</td>
+                <td class="text-right">Bid</td>
+                <td class="text-right">Ask</td>
+                <td class="text-right">Last</td>
+                <td>Expiration</td>
+                <td class="text-right">Impl. Vol.</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of result.options[0]?.calls.reverse()">
+                <td>{{item.contractSymbol}}</td>
+                <td class="text-right">{{item.strike}}</td>
+                <td class="text-right">{{item.bid}}</td>
+                <td class="text-right">{{item.ask}}</td>
+                <td class="text-right">{{item.lastPrice}}</td>
+                <td>{{item.expiration}}</td>
+                <td class="text-right">{{(item.impliedVolatility * 100).toFixed(2)}} %</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-12">
+          <h2>Puts</h2>
+          <table class="table table-hover table-sm">
+            <thead>
+            <tr>
+              <th>Symbol</th>
+              <th class="text-right">Strike</th>
+              <th class="text-right">Bid</th>
+              <th class="text-right">Ask</th>
+              <th class="text-right">Last</th>
+              <th>Expiration</th>
+              <th class="text-right">Impl. Vol.</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of result.options[0]?.puts">
+              <td>{{item.contractSymbol}}</td>
+              <td class="text-right">{{item.strike}}</td>
+              <td class="text-right">{{item.bid}}</td>
+              <td class="text-right">{{item.ask}}</td>
+              <td class="text-right">{{item.lastPrice}}</td>
+              <td>{{item.expiration}}</td>
+              <td class="text-right">{{(item.impliedVolatility * 100).toFixed(2)}} %</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

@@ -33,7 +33,7 @@
       color: mat-color($background, card);
     }
     .second {
-      color: mat-color($background, status-bar);
+      color: mat-color($background, selected-disabled-button);
     }
   }
 }

@@ -27,7 +27,7 @@ export class SubNavigationComponent implements OnInit, OnDestroy {
       .subscribe((event: any) => {
         const { url, urlAfterRedirects } = event;
         this.activeNavigationItem = this.navigation
-          .find(item => (urlAfterRedirects || url).includes(item.link));
+          .find(item => (urlAfterRedirects || url || '').includes(item.link));
       });
   }
 
