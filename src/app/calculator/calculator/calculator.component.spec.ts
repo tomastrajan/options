@@ -2,6 +2,7 @@ import { APP_BASE_HREF } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { SharedModule } from '@app/shared';
 
@@ -19,6 +20,7 @@ describe('CalculatorComponent', () => {
         SharedModule,
         ReactiveFormsModule,
         NoopAnimationsModule,
+        RouterTestingModule
       ],
       providers: [
         { provide: APP_BASE_HREF, useValue: '/' },

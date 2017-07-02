@@ -6,6 +6,7 @@ import { SharedModule } from '@app/shared';
 import { CoreModule } from '@app/core';
 
 import { MarketComponent } from './market.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('MarketComponent', () => {
   let component: MarketComponent;
@@ -17,7 +18,8 @@ describe('MarketComponent', () => {
         SharedModule,
         CoreModule,
         NoopAnimationsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        RouterTestingModule
       ],
       declarations: [ MarketComponent ]
     })

@@ -5,6 +5,7 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/debounceTime';
@@ -46,8 +47,11 @@ export class CalculatorComponent implements OnInit, OnDestroy {
 
   @ViewChild('optionChartCanvas') optionChartCanvas: ElementRef;
 
-  constructor(private formBuilder: FormBuilder,
-              private pricing: PricingService) {
+  constructor(
+    private route: ActivatedRoute,
+    private formBuilder: FormBuilder,
+    private pricing: PricingService
+  ) {
     this.Math = Math;
   }
 
@@ -147,22 +151,26 @@ export class CalculatorComponent implements OnInit, OnDestroy {
         }
       }
     });
-
+    const {
+      type, price, strike, volatility, expiration, interest, dividends
+    } = this.route.snapshot.queryParams;
     this.parameters = this.formBuilder.group({
-      type: ['call'],
+      type: [type || 'call'],
       position: ['buy'],
-      priceBase: [100, Validators.required],
-      price: [100],
-      strikeBase: [100, Validators.required],
-      strike: [100],
-      expirationBase: [30, Validators.required],
-      expiration: [30],
-      volatilityBase: [25, Validators.required],
-      volatility: [25],
-      interestBase: [5, Validators.required],
-      interest: [5],
-      dividendsBase: [1, Validators.required],
-      dividends: [1],
+      priceBase: [parseFloat(price) || 100, Validators.required],
+      price: [parseFloat(price) || 100],
+      strikeBase: [parseFloat(strike) || 100, Validators.required],
+      strike: [parseFloat(strike) || 100],
+      expirationBase: [parseFloat(expiration) || 30, Validators.required],
+      expiration: [parseFloat(expiration) || 30],
+      volatilityBase: [parseFloat(volatility) || 25, Validators.required],
+      volatility: [parseFloat(volatility) || 25],
+      interestBase: [isNumber(interest) ? parseFloat(interest) : 5,
+        Validators.required],
+      interest: [isNumber(interest) ? parseFloat(interest) : 5],
+      dividendsBase: [isNumber(dividends) ? parseFloat(dividends) : 1,
+        Validators.required],
+      dividends: [isNumber(dividends) ? parseFloat(dividends) : 1],
       range: [0.25],
       greeks: this.formBuilder.group(this.greeks.reduce((result, greek) => {
         result[greek.label] = [false];
@@ -175,10 +183,11 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       .takeUntil(this.unsubscribe$)
       .debounceTime(250)
       .filter(CalculatorComponent.areParamsValid)
-      .do(({ strike }) => {
-        if (lastStrike !== strike) {
-          this.refreshWholeChart = strike % 1 !== 0 || lastStrike % 1 !== 0;
-          lastStrike = strike;
+      .do(params => {
+        if (lastStrike !== params.strike) {
+          this.refreshWholeChart = params.strike % 1 !== 0
+            || lastStrike % 1 !== 0;
+          lastStrike = params.strike;
         }
       })
       .subscribe(this.updateChart.bind(this));
@@ -338,3 +347,5 @@ export class CalculatorComponent implements OnInit, OnDestroy {
   }
 
 }
+
+const isNumber = item => !isNaN(+item) && isFinite(item);

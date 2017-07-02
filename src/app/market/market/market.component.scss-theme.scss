@@ -1,0 +1,22 @@
+@import '~@angular/material/theming';
+
+@mixin opt-market-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $foreground: map-get($theme, foreground);
+  $background: map-get($theme, background);
+
+  .results {
+    tr {
+      td {
+        i {
+          &:hover {
+            color: mat-color($accent);
+          }
+        }
+      }
+    }
+  }
+
+}
+

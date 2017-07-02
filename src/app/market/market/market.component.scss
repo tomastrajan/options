@@ -30,6 +30,24 @@
       display: inline-block;
       white-space: nowrap;
     }
+
+    tr {
+      td {
+        i {
+          transition: opacity 0.3s;
+          opacity: 0;
+          cursor: pointer;
+        }
+      }
+
+      &:hover {
+        td {
+          i {
+            opacity: 1;
+          }
+        }
+      }
+    }
   }
 }
 

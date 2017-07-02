@@ -67,17 +67,19 @@
                 <th class="text-right">Last</th>
                 <th class="text-center">Expiration</th>
                 <th class="text-right">Impl. Vol.</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of result.options[0]?.calls">
+              <tr *ngFor="let item of result?.options[0]?.calls">
                 <td>{{item.contractSymbol}}</td>
                 <td class="text-right">{{item.strike}}</td>
                 <td class="text-right">{{item.bid}}</td>
                 <td class="text-right">{{item.ask}}</td>
                 <td class="text-right">{{item.lastPrice}}</td>
-                <td class="text-center">{{item.expiration}}</td>
+                <td class="text-center">{{item.expirationDate}}</td>
                 <td class="text-right">{{item.impliedVolatility}} %</td>
+                <td><i class="fa fa-line-chart" (click)="onItemClick('call', item)"></i></td>
               </tr>
             </tbody>
           </table>
@@ -94,17 +96,19 @@
               <th class="text-right">Last</th>
               <th class="text-center">Expiration</th>
               <th class="text-right">Impl. Vol.</th>
+              <th></th>
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let item of result.options[0]?.puts">
+            <tr *ngFor="let item of result?.options[0]?.puts">
               <td>{{item.contractSymbol}}</td>
               <td class="text-right">{{item.strike}}</td>
               <td class="text-right">{{item.bid}}</td>
               <td class="text-right">{{item.ask}}</td>
               <td class="text-right">{{item.lastPrice}}</td>
-              <td class="text-center">{{item.expiration}}</td>
+              <td class="text-center">{{item.expirationDate}}</td>
               <td class="text-right">{{item.impliedVolatility}} %</td>
+              <td><i class="fa fa-line-chart" (click)="onItemClick('put', item)"></i></td>
             </tr>
             </tbody>
           </table>

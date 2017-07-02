@@ -19,6 +19,7 @@
 @import 'app/shared/sub-navigation/sub-navigation.component.scss-theme';
 @import 'app/calculator/calculator/calculator.component.scss-theme';
 @import 'app/calculator/implied-volatility/implied-volatility.component.scss-theme';
+@import 'app/market/market/market.component.scss-theme';
 
 @mixin custom-components-theme($theme) {
   @include styles-reset-theme($theme);
@@ -27,6 +28,7 @@
   @include opt-calculator-component-theme($theme);
   @include opt-sub-navigation-component-theme($theme);
   @include opt-implied-volatility-component-theme($theme);
+  @include opt-market-theme($theme);
 }
 
 .default-theme {
