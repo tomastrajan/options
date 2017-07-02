@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.1"></a>
+## [1.3.1](https://github.com/tomastrajan/options/compare/v1.3.0...v1.3.1) (2017-07-02)
+
+
+### Bug Fixes
+
+* no referrer for IE11 ([d72594d](https://github.com/tomastrajan/options/commit/d72594d))
+
+
+
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/tomastrajan/options/compare/v1.2.1...v1.3.0) (2017-07-02)
 
