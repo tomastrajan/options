@@ -42,15 +42,15 @@
       <div class="row" *ngIf="result">
         <div class="col-12">
           <h2>
-            {{result.underlyingSymbol}}, {{result.quote.longName}}
+            <span class="underlying-info">{{result.underlyingSymbol}}, {{result.quote.longName}}</span>
             <span class="price-info">
-              <strong>{{result.quote.ask || result.quote.postMarketPrice}}</strong>
-              {{result.quote.currency}}
-              <span [ngClass]="{ negative: result.quote.regularMarketChange < 0 }">
+              <strong>
+                {{result.quote.ask || result.quote.postMarketPrice}}
+                {{result.quote.currency}}
+              </strong>
+              <span [class]="result.quote.regularMarketChange < 0 ? 'negative' : 'positive'">
                 {{result.quote?.regularMarketChange.toFixed(2)}}
-              </span>
-              <span  [ngClass]="{ negative: result.quote.regularMarketChangePercent < 0 }">
-                ({{result.quote?.regularMarketChangePercent.toFixed(2)}})
+                ( {{result.quote?.regularMarketChangePercent.toFixed(2)}} %)
               </span>
             </span>
           </h2>
@@ -60,13 +60,13 @@
           <table class="table table-hover table-sm">
             <thead>
               <tr>
-                <td>Symbol</td>
-                <td class="text-right">Strike</td>
-                <td class="text-right">Bid</td>
-                <td class="text-right">Ask</td>
-                <td class="text-right">Last</td>
-                <td>Expiration</td>
-                <td class="text-right">Impl. Vol.</td>
+                <th>Symbol</th>
+                <th class="text-right">Strike</th>
+                <th class="text-right">Bid</th>
+                <th class="text-right">Ask</th>
+                <th class="text-right">Last</th>
+                <th class="text-center">Expiration</th>
+                <th class="text-right">Impl. Vol.</th>
               </tr>
             </thead>
             <tbody>
@@ -76,8 +76,8 @@
                 <td class="text-right">{{item.bid}}</td>
                 <td class="text-right">{{item.ask}}</td>
                 <td class="text-right">{{item.lastPrice}}</td>
-                <td>{{item.expiration}}</td>
-                <td class="text-right">{{(item.impliedVolatility * 100).toFixed(2)}} %</td>
+                <td class="text-center">{{item.expiration}}</td>
+                <td class="text-right">{{item.impliedVolatility}} %</td>
               </tr>
             </tbody>
           </table>
@@ -92,7 +92,7 @@
               <th class="text-right">Bid</th>
               <th class="text-right">Ask</th>
               <th class="text-right">Last</th>
-              <th>Expiration</th>
+              <th class="text-center">Expiration</th>
               <th class="text-right">Impl. Vol.</th>
             </tr>
             </thead>
@@ -103,8 +103,8 @@
               <td class="text-right">{{item.bid}}</td>
               <td class="text-right">{{item.ask}}</td>
               <td class="text-right">{{item.lastPrice}}</td>
-              <td>{{item.expiration}}</td>
-              <td class="text-right">{{(item.impliedVolatility * 100).toFixed(2)}} %</td>
+              <td class="text-center">{{item.expiration}}</td>
+              <td class="text-right">{{item.impliedVolatility}} %</td>
             </tr>
             </tbody>
           </table>

@@ -22,5 +22,9 @@
   .negative {
     color: mat-color($warn)
   }
+
+  .positive {
+    color: adjust-hue(mat-color($warn), 150)
+  }
 }
 

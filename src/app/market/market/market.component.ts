@@ -46,11 +46,16 @@ export class MarketComponent implements OnInit, OnDestroy {
       .subscribe(res => {
         this.result = res;
         if (this.result.options[0]) {
+          ['calls', 'puts']
+            .forEach(key => this.result.options[0][key].forEach(i => {
+              i.expiration = MarketComponent.timestampToDate(i.expiration);
+              i.impliedVolatility = (i.impliedVolatility * 100).toFixed(2);
+              i.strike = i.strike.toFixed(2);
+              i.bid = i.bid.toFixed(2);
+              i.ask = i.ask.toFixed(2);
+              i.lastPrice = i.lastPrice.toFixed(2);
+            }));
           this.result.options[0].calls.reverse();
-          this.result.options[0].calls.forEach(i =>
-            i.expiration = MarketComponent.timestampToDateString(i.expiration));
-          this.result.options[0].puts.forEach(i =>
-            i.expiration = MarketComponent.timestampToDateString(i.expiration));
         }
       }, () => {}, () => this.loading = false);
   }
@@ -60,7 +65,7 @@ export class MarketComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  static timestampToDateString(timestamp: number) {
+  static timestampToDate(timestamp: number) {
     const date = new Date(timestamp * 1000);
     return `${date.getDate()}. ${date.getMonth() + 1}. ${date.getFullYear()}`
   }
