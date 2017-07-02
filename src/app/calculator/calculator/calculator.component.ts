@@ -42,6 +42,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
   parameters: FormGroup;
   values: any = {};
   chart: any;
+  refreshWholeChart = false;
 
   @ViewChild('optionChartCanvas') optionChartCanvas: ElementRef;
 
@@ -169,10 +170,17 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       }, {}))
     });
 
+    let lastStrike = 100;
     this.parameters.valueChanges
       .takeUntil(this.unsubscribe$)
       .debounceTime(250)
       .filter(CalculatorComponent.areParamsValid)
+      .do(({ strike }) => {
+        if (lastStrike !== strike) {
+          this.refreshWholeChart = strike % 1 !== 0 || lastStrike % 1 !== 0;
+          lastStrike = strike;
+        }
+      })
       .subscribe(this.updateChart.bind(this));
 
     ['price', 'strike', 'expiration', 'volatility', 'interest', 'dividends']
@@ -229,9 +237,9 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       expiration = 0, volatility = 0, interest = 0, range
     } = params;
 
-    const strikeDiff = strike * range;
-    const start = Math.max(Math.ceil(strike - strikeDiff), 0);
-    const end = Math.ceil(strike + strikeDiff);
+    const strikeDiff = Math.ceil(strike * range);
+    const start = Math.max(strike - strikeDiff, 0);
+    const end = strike + strikeDiff;
 
     const mainResult = this.pricing.priceOption(type, price, strike,
       expirationBase, volatility, interest, dividends);
@@ -274,7 +282,11 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (!isInitialized) {
+    if (!isInitialized || this.refreshWholeChart) {
+      labels.splice(0, labels.length);
+      for (let i = 0; i <= 6; i++) {
+        datasets[i].data.splice(0, datasets[i].data.length);
+      }
       for (let pricePoint = start; pricePoint <= end; pricePoint++) {
         labels.push(pricePoint.toString());
         const index = pricePoint - start;
@@ -282,6 +294,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
         datasets[1].data[index] = '0';
       }
       this.chart.update();
+      this.refreshWholeChart = false;
     }
 
     for (let pricePoint = start; pricePoint <= end; pricePoint++) {
