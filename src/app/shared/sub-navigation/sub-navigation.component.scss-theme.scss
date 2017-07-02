@@ -6,12 +6,20 @@
   $foreground: map-get($theme, foreground);
   $background: map-get($theme, background);
 
+  nav {
+    background-color: mat-color($background, card);
+  }
+
   .mat-tab-nav-bar {
     border-bottom: 0;
   }
 
   .mat-ink-bar {
     background-color: mat-color($accent);
+  }
+
+  md-select {
+    background-color: mat-color($background, card);
   }
 
   md-option.mat-option.mat-selected:not(.mat-option-multiple) {
