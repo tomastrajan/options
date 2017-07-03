@@ -26,6 +26,9 @@ import {
 import {
   SubNavigationComponent
 } from './sub-navigation/sub-navigation.component';
+import {
+  PositiveNegativeDirective
+} from './directives/positive-negative.directive';
 
 @NgModule({
   imports: [
@@ -54,7 +57,8 @@ import {
     MdSlideToggleModule
   ],
   declarations: [
-    SubNavigationComponent
+    SubNavigationComponent,
+    PositiveNegativeDirective
   ],
   exports: [
     RouterModule,
@@ -81,7 +85,8 @@ import {
     MdAutocompleteModule,
     MdSlideToggleModule,
 
-    SubNavigationComponent
+    SubNavigationComponent,
+    PositiveNegativeDirective
   ]
 })
 export class SharedModule {}
