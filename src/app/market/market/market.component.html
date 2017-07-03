@@ -19,16 +19,28 @@
           <md-autocomplete #auto="mdAutocomplete">
             <md-option *ngFor="let result of queryResults" class="underlying-holder"
                        title="{{result.name}}"
-                       (onSelectionChange)="onSymbolSelect(result.symbol)"
+                       (onSelectionChange)="retrieveOptionChains(result.symbol)"
                        [value]="result.symbol">
               <span class="underlying-label">{{ result.name }}</span>
               <small class="underlying-meta">{{ result.symbol }}, {{result.exchDisp}}</small>
             </md-option>
           </md-autocomplete>
-          <br>
-          <br>
         </div>
       </div>
+
+      <br>
+
+      <div class="row">
+        <div class="col-12" *ngIf="expirationDates.length">
+          <md-select placeholder="Expiration date" [formControl]="expirationDate"
+            (change)="retrieveOptionChains(query.value, $event.value)">
+            <md-option *ngFor="let d of expirationDates" [value]="d.value">{{d.label}}</md-option>
+          </md-select>
+        </div>
+      </div>
+
+      <br>
+      <br>
     </div>
 
     <div class="col-md-9 col-lg-8 results">
@@ -48,15 +60,15 @@
                 {{result.quote.ask || result.quote.postMarketPrice}}
                 {{result.quote.currency}}
               </strong>
-              <span [class]="result.quote.regularMarketChange < 0 ? 'negative' : 'positive'">
+              <span [optPositiveNegative]="result.quote.regularMarketChange">
                 {{result.quote?.regularMarketChange.toFixed(2)}}
                 ( {{result.quote?.regularMarketChangePercent.toFixed(2)}} %)
               </span>
             </span>
           </h2>
         </div>
-        <div class="col-12">
-          <h2>Calls</h2>
+        <div class="col-12" *ngFor="let type of types">
+          <h2>{{type}}</h2>
           <table class="table table-hover table-sm">
             <thead>
               <tr>
@@ -65,51 +77,30 @@
                 <th class="text-right">Bid</th>
                 <th class="text-right">Ask</th>
                 <th class="text-right">Last</th>
-                <th class="text-center">Expiration</th>
+                <th class="text-center" colspan="2">Change</th>
                 <th class="text-right">Impl. Vol.</th>
+                <th class="text-center">Expiration</th>
+                <th class="text-right">Vol</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of result?.options[0]?.calls">
-                <td>{{item.contractSymbol}}</td>
-                <td class="text-right">{{item.strike}}</td>
-                <td class="text-right">{{item.bid}}</td>
-                <td class="text-right">{{item.ask}}</td>
-                <td class="text-right">{{item.lastPrice}}</td>
-                <td class="text-center">{{item.expirationDate}}</td>
-                <td class="text-right">{{item.impliedVolatility}} %</td>
-                <td><i class="fa fa-line-chart" (click)="onItemClick('call', item)"></i></td>
+              <tr *ngFor="let i of result?.options[0][type]">
+                <td>{{i.contractSymbol}}</td>
+                <td class="text-right">{{i.strike}}</td>
+                <td class="text-right">{{i.bid}}</td>
+                <td class="text-right">{{i.ask}}</td>
+                <td class="text-right">{{i.lastPrice}}</td>
+                <td class="text-right" [optPositiveNegative]="i.change">{{i.change}}</td>
+                <td class="text-right" [optPositiveNegative]="i.percentChange">
+                  <span *ngIf="i.percentChange">({{i.percentChange}} %)</span>
+                  <span *ngIf="i.percentChange === 0">0</span>
+                </td>
+                <td class="text-right">{{i.impliedVolatility}} %</td>
+                <td class="text-center">{{i.expirationDate}}</td>
+                <td class="text-right">{{i.volume}}</td>
+                <td><i class="fa fa-line-chart" (click)="onItemClick('call', i)"></i></td>
               </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="col-12">
-          <h2>Puts</h2>
-          <table class="table table-hover table-sm">
-            <thead>
-            <tr>
-              <th>Symbol</th>
-              <th class="text-right">Strike</th>
-              <th class="text-right">Bid</th>
-              <th class="text-right">Ask</th>
-              <th class="text-right">Last</th>
-              <th class="text-center">Expiration</th>
-              <th class="text-right">Impl. Vol.</th>
-              <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let item of result?.options[0]?.puts">
-              <td>{{item.contractSymbol}}</td>
-              <td class="text-right">{{item.strike}}</td>
-              <td class="text-right">{{item.bid}}</td>
-              <td class="text-right">{{item.ask}}</td>
-              <td class="text-right">{{item.lastPrice}}</td>
-              <td class="text-center">{{item.expirationDate}}</td>
-              <td class="text-right">{{item.impliedVolatility}} %</td>
-              <td><i class="fa fa-line-chart" (click)="onItemClick('put', item)"></i></td>
-            </tr>
             </tbody>
           </table>
         </div>

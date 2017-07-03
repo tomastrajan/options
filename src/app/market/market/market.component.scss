@@ -8,6 +8,9 @@
     md-autocomplete {
       width: 100%;
     }
+    md-select {
+      width: 100%;
+    }
 
   }
 
@@ -33,6 +36,8 @@
 
     tr {
       td {
+        white-space: nowrap;
+
         i {
           transition: opacity 0.3s;
           opacity: 0;

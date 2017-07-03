@@ -21,8 +21,11 @@ export class MarketComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   routeAnimationState;
+  types = ['calls', 'puts'];
   query = new FormControl();
+  expirationDate = new FormControl();
   queryResults: any[] = [];
+  expirationDates: any[] = [];
   loading = false;
   result: any;
 
@@ -33,10 +36,11 @@ export class MarketComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    const { symbol } = this.route.snapshot.queryParams;
+    const { symbol, expirationDate } = this.route.snapshot.queryParams;
     if (symbol) {
       this.query.setValue(symbol);
-      this.onSymbolSelect(symbol);
+      this.expirationDate.setValue(parseInt(expirationDate, 10));
+      this.retrieveOptionChains(symbol, expirationDate);
     }
 
     this.query.valueChanges
@@ -53,25 +57,37 @@ export class MarketComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  onSymbolSelect(symbol: string) {
+  retrieveOptionChains(symbol: string, expirationDate?: string) {
     this.result = null;
+    this.expirationDates = [];
     this.loading = true;
-    this.yahooService.getOptionChains(symbol)
+    this.yahooService.getOptionChains(symbol, expirationDate)
       .subscribe(res => {
-        this.result = res;
-        if (this.result && this.result.options[0]) {
-          ['calls', 'puts']
-            .forEach(key => this.result.options[0][key].forEach(i => {
-              i.expirationDate = MarketComponent.timestampToDate(i.expiration);
-              i.impliedVolatility = (i.impliedVolatility * 100).toFixed(2);
-              i.strike = i.strike.toFixed(2);
-              i.bid = i.bid.toFixed(2);
-              i.ask = i.ask.toFixed(2);
-              i.lastPrice = i.lastPrice.toFixed(2);
-            }));
+        if (res && res.options[0]) {
+          this.result = res;
+          this.types.forEach(key => this.result.options[0][key].forEach(i => {
+            i.expirationDate = MarketComponent.timestampToDate(i.expiration);
+            i.impliedVolatility = (i.impliedVolatility * 100).toFixed(2);
+            i.strike = i.strike.toFixed(2);
+            i.bid = i.bid.toFixed(2);
+            i.ask = i.ask.toFixed(2);
+            i.lastPrice = i.lastPrice.toFixed(2);
+            i.change = i.change === 0 ? 0 : i.change.toFixed(2);
+            i.percentChange = i.percentChange === 0 ? 0
+              : i.percentChange.toFixed(2);
+          }));
           this.result.options[0].calls.reverse();
-          this.router.navigate(['.'],
-            { queryParams: { symbol }, relativeTo: this.route });
+
+          if (!expirationDate) {
+            this.expirationDate.setValue(this.result.expirationDates[0]);
+          }
+          this.expirationDates = this.result.expirationDates
+            .map(d => ({ value: d, label: MarketComponent.timestampToDate(d)}));
+
+          this.router.navigate(['.'], {
+            queryParams: { symbol, expirationDate: this.expirationDate.value },
+            relativeTo: this.route
+          });
         }
       }, () => {}, () => this.loading = false);
   }
@@ -93,8 +109,12 @@ export class MarketComponent implements OnInit, OnDestroy {
   }
 
   static timestampToDate(timestamp: number) {
-    const date = new Date(timestamp * 1000);
-    return `${date.getDate()}. ${date.getMonth() + 1}. ${date.getFullYear()}`
+    const d = new Date(timestamp * 1000);
+    let date = d.getDate().toString();
+    date = date.length === 1 ? `0${date}` : date;
+    let month = (d.getMonth() + 1).toString();
+    month = month.length === 1 ? `0${month}` : month;
+    return `${date}. ${month}. ${d.getFullYear()}`
   }
 
 }

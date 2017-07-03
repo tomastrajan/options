@@ -17,8 +17,9 @@ export class YahooService {
     private jsonp: Jsonp
   ) {}
 
-  getOptionChains(symbol: string) {
-    return this.http.get(`${API_OPTIONS}${symbol}`)
+  getOptionChains(symbol: string, date?: string) {
+    const url = `${API_OPTIONS}${symbol}${date ? '?date=' + date : ''}`;
+    return this.http.get(url)
       .map(res => res.json().optionChain.result[0])
       .catch(err => {
         console.log(err);
