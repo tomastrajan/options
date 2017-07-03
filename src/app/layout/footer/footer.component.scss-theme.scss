@@ -8,6 +8,10 @@
   opt-footer {
     color: mat-color($primary, lighter);
     background-color: mat-color($primary, darker);
+
+    a {
+      color: mat-color($primary, lighter);
+    }
   }
 }
 
