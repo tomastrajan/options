@@ -1,61 +1,66 @@
 <div class="container" [@routeAnimation]="routeAnimationState">
 
-  <div class="row">
-
-    <div class="col-md-3 col-lg-4 query">
-      <div class="row">
-        <div class="col-12">
-          <h2>UNDERLYING SEARCH</h2>
-        </div>
+  <div class="row query">
+    <div class="col-md-12 main-heading">
+      <div class="view-mode-selector">
+        <small>View mode</small>
+        <md-button-toggle-group [(ngModel)]="viewMode">
+          <md-button-toggle value="list">
+            <md-icon>view_headline</md-icon>
+          </md-button-toggle>
+          <md-button-toggle value="columns">
+            <md-icon>view_column</md-icon>
+          </md-button-toggle>
+        </md-button-toggle-group>
       </div>
-
-      <div class="row">
-        <div class="col-12">
-          <md-input-container>
-            <i class="fa fa-search" mdSuffix></i>
-            <input type="text" mdInput [formControl]="query" [mdAutocomplete]="auto"
-                   placeholder="Company name">
-          </md-input-container>
-          <md-autocomplete #auto="mdAutocomplete">
-            <md-option *ngFor="let result of queryResults" class="underlying-holder"
-                       title="{{result.name}}"
-                       (onSelectionChange)="retrieveOptionChains(result.symbol)"
-                       [value]="result.symbol">
-              <span class="underlying-label">{{ result.name }}</span>
-              <small class="underlying-meta">{{ result.symbol }}, {{result.exchDisp}}</small>
-            </md-option>
-          </md-autocomplete>
-        </div>
-      </div>
-
-      <br>
-
-      <div class="row">
-        <div class="col-12" *ngIf="expirationDates.length">
-          <md-select placeholder="Expiration date" [formControl]="expirationDate"
-            (change)="retrieveOptionChains(query.value, $event.value)">
-            <md-option *ngFor="let d of expirationDates" [value]="d.value">{{d.label}}</md-option>
-          </md-select>
-        </div>
-      </div>
-
-      <br>
-      <br>
+      <h2>UNDERLYING SEARCH</h2>
     </div>
+    <div class="col-md-6">
+      <md-input-container>
+        <i class="fa fa-search" mdSuffix></i>
+        <input type="text" mdInput [formControl]="query" [mdAutocomplete]="auto"
+               placeholder="Company name">
+      </md-input-container>
+      <md-autocomplete #auto="mdAutocomplete">
+        <md-option *ngFor="let result of queryResults" class="underlying-holder"
+                   title="{{result.name}}"
+                   (onSelectionChange)="retrieveOptionChains(result.symbol)"
+                   [value]="result.symbol">
+          <span class="underlying-label">{{ result.name }}</span>
+          <small class="underlying-meta">{{ result.symbol }},
+            {{result.exchDisp}}
+          </small>
+        </md-option>
+      </md-autocomplete>
+    </div>
+    <div class="col-md-6">
+      <md-select placeholder="Expiration date" [(ngModel)]="expirationDate"
+                 [disabled]="!expirationDates.length"
+                 (change)="retrieveOptionChains(query.value, $event.value)">
+        <md-option *ngFor="let d of expirationDates" [value]="d.value">
+          {{d.label}}
+        </md-option>
+      </md-select>
+    </div>
+  </div>
 
-    <div class="col-md-9 col-lg-8 results">
-      <div class="row" *ngIf="!result">
-        <div class="col-12">
-          <h2>RESULTS</h2>
-          <small *ngIf="!loading">No results, search for some underlying first...</small>
-          <md-spinner *ngIf="loading"></md-spinner>
-        </div>
+  <br>
+
+  <div class="results">
+    <div class="row" *ngIf="!result">
+      <div class="col-12">
+        <h2>RESULTS</h2>
+        <small *ngIf="!loading">No results, search for some underlying
+          first...
+        </small>
+        <md-spinner *ngIf="loading"></md-spinner>
       </div>
-      <div class="row" *ngIf="result">
-        <div class="col-12">
-          <h2>
-            <span class="underlying-info">{{result.underlyingSymbol}}, {{result.quote.longName}}</span>
-            <span class="price-info">
+    </div>
+    <div class="row" *ngIf="result">
+      <div class="col-12">
+        <h2>
+          <span class="underlying-info">{{result.underlyingSymbol}}, {{result.quote.longName}}</span>
+          <span class="price-info">
               <strong>
                 {{result.quote.ask || result.quote.postMarketPrice}}
                 {{result.quote.currency}}
@@ -65,48 +70,107 @@
                 ( {{result.quote?.regularMarketChangePercent.toFixed(2)}} %)
               </span>
             </span>
-          </h2>
-        </div>
-        <div class="col-12" *ngFor="let type of types">
+        </h2>
+        <br>
+      </div>
+      <div class="col-12 table-wrapper" *ngIf="viewMode === 'columns'" @slideInDownOutUp>
+        <table class="table table-hover table-sm compact">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Calls</th>
+              <th class="text-right">Bid</th>
+              <th class="text-right">Ask</th>
+              <th class="text-right">Last</th>
+              <th class="text-center">Change</th>
+              <th class="text-right">Impl. Vol.</th>
+              <th class="text-right">Vol</th>
+
+              <th class="text-center strike">Strike</th>
+
+              <th class="text-right">Vol</th>
+              <th class="text-right">Impl. Vol.</th>
+              <th class="text-center">Change</th>
+              <th class="text-right">Last</th>
+              <th class="text-right">Ask</th>
+              <th class="text-right">Bid</th>
+              <th class="text-right">Puts</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of result.compact">
+              <td><i class="fa fa-line-chart"
+                     (click)="onItemClick('call', c.call)"></i></td>
+              <td>{{c.call?.contractSymbol}}</td>
+              <td class="text-right">{{c.call?.bid}}</td>
+              <td class="text-right">{{c.call?.ask}}</td>
+              <td class="text-right">{{c.call?.lastPrice}}</td>
+              <td class="text-right" [optPositiveNegative]="c.call?.change">
+                {{c.call?.change}}
+              </td>
+              <td class="text-right">{{c.call?.impliedVolatility}} <span *ngIf="c.call">%</span></td>
+              <td class="text-right">{{c.call?.volume}}</td>
+
+              <td class="text-center strike">{{c.strike}}</td>
+
+              <td class="text-right">{{c.put?.volume}}</td>
+              <td class="text-right">{{c.put?.impliedVolatility}}  <span *ngIf="c.put">%</span></td>
+              <td class="text-right" [optPositiveNegative]="c.put?.change">
+                {{c.put?.change}}
+              </td>
+              <td class="text-right">{{c.put?.lastPrice}}</td>
+              <td class="text-right">{{c.put?.ask}}</td>
+              <td class="text-right">{{c.put?.bid}}</td>
+              <td class="text-right">{{c.put?.contractSymbol}}</td>
+              <td><i class="fa fa-line-chart"
+                     (click)="onItemClick('put', c.put)"></i></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-12" *ngIf="viewMode === 'list'"  @slideInDownOutUp>
+        <div class=" table-wrapper" *ngFor="let type of types" >
           <h2>{{type}}</h2>
           <table class="table table-hover table-sm">
             <thead>
-              <tr>
-                <th>Symbol</th>
-                <th class="text-right">Strike</th>
-                <th class="text-right">Bid</th>
-                <th class="text-right">Ask</th>
-                <th class="text-right">Last</th>
-                <th class="text-center" colspan="2">Change</th>
-                <th class="text-right">Impl. Vol.</th>
-                <th class="text-center">Expiration</th>
-                <th class="text-right">Vol</th>
-                <th></th>
-              </tr>
+            <tr>
+              <th>Symbol</th>
+              <th class="text-right">Strike</th>
+              <th class="text-right">Bid</th>
+              <th class="text-right">Ask</th>
+              <th class="text-right">Last</th>
+              <th class="text-center" colspan="2">Change</th>
+              <th class="text-right">Impl. Vol.</th>
+              <th class="text-right">Vol</th>
+              <th></th>
+            </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let i of result?.options[0][type]">
-                <td>{{i.contractSymbol}}</td>
-                <td class="text-right">{{i.strike}}</td>
-                <td class="text-right">{{i.bid}}</td>
-                <td class="text-right">{{i.ask}}</td>
-                <td class="text-right">{{i.lastPrice}}</td>
-                <td class="text-right" [optPositiveNegative]="i.change">{{i.change}}</td>
-                <td class="text-right" [optPositiveNegative]="i.percentChange">
-                  <span *ngIf="i.percentChange">({{i.percentChange}} %)</span>
-                  <span *ngIf="i.percentChange === 0">0</span>
-                </td>
-                <td class="text-right">{{i.impliedVolatility}} %</td>
-                <td class="text-center">{{i.expirationDate}}</td>
-                <td class="text-right">{{i.volume}}</td>
-                <td><i class="fa fa-line-chart" (click)="onItemClick('call', i)"></i></td>
-              </tr>
+            <tr *ngFor="let i of result[type]">
+              <td>{{i.contractSymbol}}</td>
+              <td class="text-right">{{i.strike}}</td>
+              <td class="text-right">{{i.bid}}</td>
+              <td class="text-right">{{i.ask}}</td>
+              <td class="text-right">{{i.lastPrice}}</td>
+              <td class="text-right" [optPositiveNegative]="i.change">
+                {{i.change}}
+              </td>
+              <td class="text-right" [optPositiveNegative]="i.percentChange">
+                <span *ngIf="i.percentChange">({{i.percentChange}} %)</span>
+                <span *ngIf="i.percentChange === 0">0</span>
+              </td>
+              <td class="text-right">{{i.impliedVolatility}} %</td>
+              <td class="text-right">{{i.volume}}</td>
+              <td><i class="fa fa-line-chart"
+                     (click)="onItemClick('call', i)"></i></td>
+            </tr>
             </tbody>
           </table>
         </div>
       </div>
+
     </div>
-
   </div>
-
 </div>

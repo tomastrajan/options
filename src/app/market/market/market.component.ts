@@ -8,22 +8,23 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/do';
 
-import { ROUTE_ANIMATION, YahooService } from '@app/core';
+import { ROUTE_ANIMATION, SLIDE_IN_DOWN_OUT_UP, YahooService } from '@app/core';
 
 @Component({
   selector: 'opt-market',
   templateUrl: './market.component.html',
   styleUrls: ['./market.component.scss'],
-  animations: [ROUTE_ANIMATION]
+  animations: [ROUTE_ANIMATION, SLIDE_IN_DOWN_OUT_UP]
 })
 export class MarketComponent implements OnInit, OnDestroy {
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
+  viewMode = 'list';
   routeAnimationState;
   types = ['calls', 'puts'];
   query = new FormControl();
-  expirationDate = new FormControl();
+  expirationDate;
   queryResults: any[] = [];
   expirationDates: any[] = [];
   loading = false;
@@ -39,7 +40,7 @@ export class MarketComponent implements OnInit, OnDestroy {
     const { symbol, expirationDate } = this.route.snapshot.queryParams;
     if (symbol) {
       this.query.setValue(symbol);
-      this.expirationDate.setValue(parseInt(expirationDate, 10));
+      this.expirationDate = parseInt(expirationDate, 10);
       this.retrieveOptionChains(symbol, expirationDate);
     }
 
@@ -59,14 +60,14 @@ export class MarketComponent implements OnInit, OnDestroy {
 
   retrieveOptionChains(symbol: string, expirationDate?: string) {
     this.result = null;
-    this.expirationDates = [];
     this.loading = true;
     this.yahooService.getOptionChains(symbol, expirationDate)
       .subscribe(res => {
-        if (res && res.options[0]) {
+        if (res && res.options) {
           this.result = res;
-          this.types.forEach(key => this.result.options[0][key].forEach(i => {
-            i.expirationDate = MarketComponent.timestampToDate(i.expiration);
+          this.result.calls = this.result.options[0].calls;
+          this.result.puts = this.result.options[0].puts;
+          this.types.forEach(key => this.result[key].forEach(i => {
             i.impliedVolatility = (i.impliedVolatility * 100).toFixed(2);
             i.strike = i.strike.toFixed(2);
             i.bid = i.bid.toFixed(2);
@@ -76,16 +77,26 @@ export class MarketComponent implements OnInit, OnDestroy {
             i.percentChange = i.percentChange === 0 ? 0
               : i.percentChange.toFixed(2);
           }));
-          this.result.options[0].calls.reverse();
+          this.result.calls.reverse();
+
+          this.result.compact = this.result.strikes
+            .map(strike => strike.toFixed(2))
+            .map(strike => ({
+              strike,
+              call: this.result.calls.find(c => c.strike === strike),
+              put: this.result.puts.find(p => p.strike === strike)
+            }));
 
           if (!expirationDate) {
-            this.expirationDate.setValue(this.result.expirationDates[0]);
+            this.expirationDate = this.result.expirationDates[0];
           }
           this.expirationDates = this.result.expirationDates
             .map(d => ({ value: d, label: MarketComponent.timestampToDate(d)}));
 
+          console.log(this.result);
+
           this.router.navigate(['.'], {
-            queryParams: { symbol, expirationDate: this.expirationDate.value },
+            queryParams: { symbol, expirationDate: this.expirationDate },
             relativeTo: this.route
           });
         }

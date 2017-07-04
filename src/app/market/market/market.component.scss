@@ -1,6 +1,19 @@
 .container {
   padding-top: 20px;
 
+  .main-heading {
+    margin-bottom: 20px;
+
+    .view-mode-selector {
+      float: right;
+
+      small {
+        padding: 0 10px 0 0;
+      }
+    }
+  }
+
+
   .query {
     md-input-container {
       width: 100%
@@ -9,6 +22,7 @@
       width: 100%;
     }
     md-select {
+      margin: 14px 0 0 0;
       width: 100%;
     }
 
@@ -34,6 +48,11 @@
       white-space: nowrap;
     }
 
+    .table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 20px;
+    }
+
     tr {
       td {
         white-space: nowrap;
@@ -50,6 +69,30 @@
           i {
             opacity: 1;
           }
+        }
+      }
+    }
+
+    .compact {
+
+      th.strike {
+        padding: 20px 20px 5px 20px;
+        border-top: 2px solid;
+        border-left: 2px solid;
+        border-right: 2px solid;
+      }
+
+      td.strike {
+        padding-left: 20px;
+        padding-right: 20px;
+        border-left: 2px solid;
+        border-right: 2px solid;
+        font-weight: bold;
+      }
+
+      tr:last-child {
+        td.strike {
+          border-bottom: 2px solid;
         }
       }
     }
