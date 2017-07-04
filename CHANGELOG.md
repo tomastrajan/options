@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.6.0"></a>
+# [1.6.0](https://github.com/tomastrajan/options/compare/v1.5.0...v1.6.0) (2017-07-04)
+
+
+### Features
+
+* market compact results view model ([4d71969](https://github.com/tomastrajan/options/commit/4d71969))
+
+
+
 <a name="1.5.0"></a>
 # [1.5.0](https://github.com/tomastrajan/options/compare/v1.4.0...v1.5.0) (2017-07-03)
 
