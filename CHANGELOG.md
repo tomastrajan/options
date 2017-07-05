@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.7.0"></a>
+# [1.7.0](https://github.com/tomastrajan/options/compare/v1.6.0...v1.7.0) (2017-07-05)
+
+
+### Bug Fixes
+
+* about tests ([d34144c](https://github.com/tomastrajan/options/commit/d34144c))
+* about tests ([9fe8604](https://github.com/tomastrajan/options/commit/9fe8604))
+* market action icon styling ([932adbf](https://github.com/tomastrajan/options/commit/932adbf))
+
+
+### Features
+
+* about page content ([a18379d](https://github.com/tomastrajan/options/commit/a18379d))
+
+
+
 <a name="1.6.0"></a>
 # [1.6.0](https://github.com/tomastrajan/options/compare/v1.5.0...v1.6.0) (2017-07-04)
 
