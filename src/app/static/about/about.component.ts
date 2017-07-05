@@ -33,7 +33,6 @@ export class AboutComponent implements OnInit, OnDestroy {
     this.query.valueChanges
       .takeUntil(this.unsubscribe$)
       .debounceTime(200)
-      .filter(q => q.length >= 3)
       .switchMap(q => this.yahooService.searchSymbol(q))
       .map(res => res.ResultSet.Result.filter(item => item.type === 'S'))
       .subscribe(results => this.queryResults = results);

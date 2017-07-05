@@ -83,17 +83,17 @@
               <th class="text-right">Ask</th>
               <th class="text-right">Last</th>
               <th class="text-center">Change</th>
-              <th class="text-right">Impl. Vol.</th>
+              <th class="text-right">I. Vola.</th>
               <th class="text-right">Vol</th>
 
               <th class="text-center strike">Strike</th>
 
-              <th class="text-right">Vol</th>
-              <th class="text-right">Impl. Vol.</th>
-              <th class="text-center">Change</th>
-              <th class="text-right">Last</th>
-              <th class="text-right">Ask</th>
               <th class="text-right">Bid</th>
+              <th class="text-right">Ask</th>
+              <th class="text-right">Last</th>
+              <th class="text-center">Change</th>
+              <th class="text-right">I. Vola.</th>
+              <th class="text-right">Vol</th>
               <th class="text-right">Puts</th>
               <th></th>
             </tr>
@@ -114,14 +114,14 @@
 
               <td class="text-center strike">{{c.strike}}</td>
 
-              <td class="text-right">{{c.put?.volume}}</td>
-              <td class="text-right">{{c.put?.impliedVolatility}}  <span *ngIf="c.put">%</span></td>
+              <td class="text-right">{{c.put?.bid}}</td>
+              <td class="text-right">{{c.put?.lastPrice}}</td>
+              <td class="text-right">{{c.put?.ask}}</td>
               <td class="text-right" [optPositiveNegative]="c.put?.change">
                 {{c.put?.change}}
               </td>
-              <td class="text-right">{{c.put?.lastPrice}}</td>
-              <td class="text-right">{{c.put?.ask}}</td>
-              <td class="text-right">{{c.put?.bid}}</td>
+              <td class="text-right">{{c.put?.impliedVolatility}}  <span *ngIf="c.put">%</span></td>
+              <td class="text-right">{{c.put?.volume}}</td>
               <td class="text-right">{{c.put?.contractSymbol}}</td>
               <td><i class="fa fa-line-chart" *ngIf="c.put"
                      (click)="onItemClick('put', c.put)"></i></td>
@@ -142,7 +142,7 @@
               <th class="text-right">Ask</th>
               <th class="text-right">Last</th>
               <th class="text-center" colspan="2">Change</th>
-              <th class="text-right">Impl. Vol.</th>
+              <th class="text-right">I. Vola.</th>
               <th class="text-right">Vol</th>
               <th></th>
             </tr>

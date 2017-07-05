@@ -47,7 +47,6 @@ export class MarketComponent implements OnInit, OnDestroy {
     this.query.valueChanges
       .takeUntil(this.unsubscribe$)
       .debounceTime(200)
-      .filter(q => q.length >= 3)
       .switchMap(q => this.yahooService.searchSymbol(q))
       .map(res => res.ResultSet.Result.filter(item => item.type === 'S'))
       .subscribe(results => this.queryResults = results);
@@ -92,6 +91,8 @@ export class MarketComponent implements OnInit, OnDestroy {
           }
           this.expirationDates = this.result.expirationDates
             .map(d => ({ value: d, label: MarketComponent.timestampToDate(d)}));
+
+          console.log(this.result);
 
           this.router.navigate(['.'], {
             queryParams: { symbol, expirationDate: this.expirationDate },
