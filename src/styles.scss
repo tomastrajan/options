@@ -15,6 +15,7 @@
 
 @import 'styles-reset.scss-theme';
 @import 'app/app.component.scss-theme';
+@import 'app/static/about/about.component.scss-theme.scss';
 @import 'app/layout/footer/footer.component.scss-theme';
 @import 'app/shared/sub-navigation/sub-navigation.component.scss-theme';
 @import 'app/calculator/calculator/calculator.component.scss-theme';
@@ -24,6 +25,7 @@
 @mixin custom-components-theme($theme) {
   @include styles-reset-theme($theme);
   @include app-component-theme($theme);
+  @include opt-about-component-theme($theme);
   @include opt-footer-component-theme($theme);
   @include opt-calculator-component-theme($theme);
   @include opt-sub-navigation-component-theme($theme);

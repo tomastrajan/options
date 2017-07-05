@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 
 import { CoreModule } from '@app/core';
 import { SharedModule } from '@app/shared';
@@ -16,7 +15,6 @@ import {
 
 @NgModule({
   imports: [
-    ReactiveFormsModule,
     CoreModule,
     SharedModule,
     CalculatorRoutingModule

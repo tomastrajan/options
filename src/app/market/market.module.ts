@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 
 import { CoreModule } from '@app/core';
 import { SharedModule } from '@app/shared';
@@ -11,7 +10,6 @@ import { MarketComponent } from './market/market.component';
   imports: [
     CoreModule,
     SharedModule,
-    ReactiveFormsModule,
     MarketRoutingModule,
   ],
   declarations: [MarketComponent]
