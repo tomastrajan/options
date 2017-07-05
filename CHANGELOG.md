@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.7.3"></a>
+## [1.7.3](https://github.com/tomastrajan/options/compare/v1.7.2...v1.7.3) (2017-07-05)
+
+
+### Bug Fixes
+
+* feature icon, wording ([62a3f16](https://github.com/tomastrajan/options/commit/62a3f16))
+* responsive layout ([958a460](https://github.com/tomastrajan/options/commit/958a460))
+
+
+
 <a name="1.7.2"></a>
 ## [1.7.2](https://github.com/tomastrajan/options/compare/v1.7.1...v1.7.2) (2017-07-05)
 
