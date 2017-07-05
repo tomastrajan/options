@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.7.1"></a>
+## [1.7.1](https://github.com/tomastrajan/options/compare/v1.7.0...v1.7.1) (2017-07-05)
+
+
+### Bug Fixes
+
+* search for undelrying shorter than 3 characters, compact table layout ([b889dca](https://github.com/tomastrajan/options/commit/b889dca))
+
+
+
 <a name="1.7.0"></a>
 # [1.7.0](https://github.com/tomastrajan/options/compare/v1.6.0...v1.7.0) (2017-07-05)
 
