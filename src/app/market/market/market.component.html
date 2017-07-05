@@ -100,7 +100,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let c of result.compact">
-              <td><i class="fa fa-line-chart"
+              <td><i class="fa fa-line-chart" *ngIf="c.call"
                      (click)="onItemClick('call', c.call)"></i></td>
               <td>{{c.call?.contractSymbol}}</td>
               <td class="text-right">{{c.call?.bid}}</td>
@@ -123,7 +123,7 @@
               <td class="text-right">{{c.put?.ask}}</td>
               <td class="text-right">{{c.put?.bid}}</td>
               <td class="text-right">{{c.put?.contractSymbol}}</td>
-              <td><i class="fa fa-line-chart"
+              <td><i class="fa fa-line-chart" *ngIf="c.put"
                      (click)="onItemClick('put', c.put)"></i></td>
             </tr>
           </tbody>
@@ -150,7 +150,7 @@
             <tbody>
             <tr *ngFor="let i of result[type]">
               <td>{{i.contractSymbol}}</td>
-              <td class="text-right">{{i.strike}}</td>
+              <td class="text-right"><strong>{{i.strike}}</strong></td>
               <td class="text-right">{{i.bid}}</td>
               <td class="text-right">{{i.ask}}</td>
               <td class="text-right">{{i.lastPrice}}</td>
