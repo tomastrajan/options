@@ -22,19 +22,19 @@
     margin-bottom: 60px;
   }
 
+  .actions {
+    margin-bottom: 180px;
+  }
+
   @media (max-width: map-get($grid-breakpoints, md)) {
     h1 {
-      font-size: 3.5em;
-      line-height: 1.1em;
+      font-size: 3.25em;
+      line-height: 1em;
     }
 
     .actions {
-      margin-bottom: 40px;
+      margin-bottom: 20px;
     }
-  }
-
-  .actions {
-    margin-bottom: 180px;
   }
 
   .links {
