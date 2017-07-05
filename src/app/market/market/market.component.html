@@ -1,19 +1,19 @@
 <div class="container" [@routeAnimation]="routeAnimationState">
 
   <div class="row query">
-    <div class="col-md-12 main-heading">
-      <div class="view-mode-selector">
-        <small>View mode</small>
-        <md-button-toggle-group [(ngModel)]="viewMode">
-          <md-button-toggle value="list">
-            <md-icon>view_headline</md-icon>
-          </md-button-toggle>
-          <md-button-toggle value="columns">
-            <md-icon>view_column</md-icon>
-          </md-button-toggle>
-        </md-button-toggle-group>
-      </div>
+    <div class="col-md-6 main-heading">
       <h2>UNDERLYING SEARCH</h2>
+    </div>
+    <div class="col-md-6 view-mode-selector">
+      <small>View mode</small>
+      <md-button-toggle-group [(ngModel)]="viewMode">
+        <md-button-toggle value="list">
+          <md-icon>view_headline</md-icon>
+        </md-button-toggle>
+        <md-button-toggle value="columns">
+          <md-icon>view_column</md-icon>
+        </md-button-toggle>
+      </md-button-toggle-group>
     </div>
     <div class="col-md-6">
       <md-input-container>

@@ -5,13 +5,25 @@
 
   .main-heading {
     margin-bottom: 20px;
+  }
+
+  .view-mode-selector {
+    text-align: right;
+
+    small {
+      padding: 0 10px 0 0;
+    }
+  }
+
+  @media (max-width: map-get($grid-breakpoints, sm)) {
+    .main-heading {
+      text-align: center;
+      margin-bottom: 0;
+    }
 
     .view-mode-selector {
-      float: right;
-
-      small {
-        padding: 0 10px 0 0;
-      }
+      text-align: center;
+      margin-bottom: 20px;
     }
   }
 
