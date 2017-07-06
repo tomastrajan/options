@@ -1,8 +1,45 @@
+@import "styles-variables";
+
 div {
-  text-align: center;
-  padding: 20px;
+
+  .item {
+    padding: 20px;
+  }
+
+  .app {
+    text-align: center;
+  }
 
   .version {
-    float: right;
+    text-align: right;
   }
+
+  .disclaimer {
+    text-align: left;
+
+    span {
+      white-space: nowrap;
+    }
+  }
+
+
+  @media (max-width: map-get($grid-breakpoints, md)) {
+    .item {
+      padding: 15px 0 0 0;
+    }
+
+    .row {
+      padding-bottom: 15px;
+    }
+
+    .version {
+      text-align: center;
+    }
+
+    .disclaimer {
+      text-align: center;
+    }
+
+  }
+
 }
