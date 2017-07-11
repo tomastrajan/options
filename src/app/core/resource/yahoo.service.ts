@@ -59,7 +59,6 @@ export class YahooService {
         KEYS.forEach(key => {
           const val = call[key];
           call[key] = YahooService.numberRandomizer(call[key]);
-          console.log(call.contractSymbol, key, val, call[key]);
         })
       });
       puts.forEach(put => KEYS

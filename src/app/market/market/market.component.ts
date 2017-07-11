@@ -92,8 +92,6 @@ export class MarketComponent implements OnInit, OnDestroy {
           this.expirationDates = this.result.expirationDates
             .map(d => ({ value: d, label: MarketComponent.timestampToDate(d)}));
 
-          console.log(this.result);
-
           this.router.navigate(['.'], {
             queryParams: { symbol, expirationDate: this.expirationDate },
             relativeTo: this.route
