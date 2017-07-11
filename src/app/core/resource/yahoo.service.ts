@@ -1,26 +1,21 @@
 import { Injectable } from '@angular/core';
-import { Http, Jsonp } from '@angular/http';
+import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
-const API_OPTIONS = 'https://crossorigin.me/'
-  + 'https://query2.finance.yahoo.com/v7/finance/options/';
-const API_SYMBOL = 'https://autoc.finance.yahoo.com/' +
-  'autoc?query=';
-const API_SYMBOL_SUFFIX = '&region=US&lang=en&callback=JSONP_CALLBACK';
+import { environment as env } from '../../../environments/environment';
 
 @Injectable()
 export class YahooService {
 
   constructor(
-    private http: Http,
-    private jsonp: Jsonp
+    private http: Http
   ) {}
 
   getOptionChains(symbol: string, date?: string) {
-    const url = `${API_OPTIONS}${symbol}${date ? '?date=' + date : ''}`;
-    return this.http.get(url)
-      .map(res => res.json().optionChain.result[0])
+    return this.http
+      .get(`${env.API}chains?symbol=${symbol}${date ? '&date=' + date : ''}`)
+      .map(res => res.json())
       .map(data => this.dataRandomizer(data))
       .catch(err => {
         console.log(err);
@@ -29,7 +24,7 @@ export class YahooService {
   }
 
   searchSymbol(query: string) {
-    return this.jsonp.get(`${API_SYMBOL}${query}${API_SYMBOL_SUFFIX}`)
+    return this.http.get(`${env.API}symbol?query=${query}`)
       .map(res => res.json())
       .catch(err => {
         console.log(err);

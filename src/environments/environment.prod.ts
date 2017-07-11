@@ -8,5 +8,6 @@ export const environment = {
     projectId: 'options-54580',
     storageBucket: 'options-54580.appspot.com',
     messagingSenderId: '574922059308'
-  }
+  },
+  API: 'https://option-quote.herokuapp.com/'
 };
