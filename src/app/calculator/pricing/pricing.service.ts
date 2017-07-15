@@ -23,14 +23,14 @@ export class PricingService {
     const key = `${currentPrice}-${strike}-${daysToExpiration}-${volatilityPercent}-${interestRatePercent}-${dividendYieldPercent}`
     const cachedResult = this.memoizationCache[type][key];
     if (cachedResult) {
-      return cachedResult;
+      return Object.assign({}, cachedResult);
     } else {
       const result = this.bsm(type, currentPrice, strike,
         volatilityPercent / 100, interestRatePercent / 100,
         dividendYieldPercent / 100, daysToExpiration / 365);
       this.memoizationCache[type][key] = result;
       setTimeout(() => delete this.memoizationCache[type][key], CACHE_TIMEOUT);
-      return result;
+      return Object.assign({}, result);
     }
   }
 

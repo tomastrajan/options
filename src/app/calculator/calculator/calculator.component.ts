@@ -253,6 +253,8 @@ export class CalculatorComponent implements OnInit, OnDestroy {
     const mainResult = this.pricing.priceOption(type, price, strike,
       expirationBase, volatility, interest, dividends);
     const currentOptionPrice = mainResult.price;
+    CalculatorComponent
+      .adjustGreekValuesForPositionAndType(type, position, mainResult);
     this.values = Object.keys(mainResult).reduce((result, key) => {
       result[key] = mainResult[key].toFixed(5);
       return result;
@@ -317,21 +319,25 @@ export class CalculatorComponent implements OnInit, OnDestroy {
 
       const resultTheo = this.pricing.priceOption(type, pricePoint, strike,
         expiration, volatility, interest, dividends);
-      let priceTheo = position === 'buy'
+      const isBuy = position === 'buy';
+      const isCall = type === 'call';
+      let priceTheo = isBuy
         ? resultTheo.price - currentOptionPrice
         : (resultTheo.price * (-1)) + currentOptionPrice;
-      if ((position === 'buy' && priceExpiry > priceTheo)
-        || (position === 'sell' && priceExpiry < priceTheo)) {
+      if ((isBuy && priceExpiry > priceTheo)
+        || (!isBuy && priceExpiry < priceTheo)) {
         priceTheo = priceExpiry;
       }
+      CalculatorComponent
+        .adjustGreekValuesForPositionAndType(type, position, resultTheo);
       const { delta, gamma, theta, vega, rho } = resultTheo;
       datasets[0].data[index] = priceExpiry.toFixed(5);
       datasets[1].data[index] = priceTheo.toFixed(5);
       datasets[2].data[index] = delta.toFixed(5);
       datasets[3].data[index] = gamma.toFixed(5);
-      datasets[4].data[index] = theta.toFixed(5);
-      datasets[5].data[index] = vega.toFixed(5);
-      datasets[6].data[index] = rho.toFixed(5);
+      datasets[4].data[index] = vega.toFixed(5);
+      datasets[5].data[index] = rho.toFixed(5);
+      datasets[6].data[index] = theta.toFixed(5);
 
       this.chart.update();
     }
@@ -344,6 +350,24 @@ export class CalculatorComponent implements OnInit, OnDestroy {
     return price !== null && strike !== null
       && dividends !== null && expiration !== null
       && volatility !== null && interest !== null;
+  }
+
+  static adjustGreekValuesForPositionAndType(type, position, values) {
+    const isBuy = position === 'buy';
+    const isCall = type === 'call';
+    if (isCall && !isBuy) {
+      values.delta = -values.delta;
+      values.gamma = -values.gamma;
+      values.theta = -values.theta;
+      values.vega = -values.vega;
+      values.rho = -values.rho;
+    } else if (!isCall && !isBuy) {
+      values.delta = -values.delta;
+      values.gamma = -values.gamma;
+      values.vega = -values.vega;
+      values.rho = -values.rho;
+      values.theta = -values.theta;
+    }
   }
 
 }
