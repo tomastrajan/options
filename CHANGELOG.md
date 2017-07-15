@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.2"></a>
+## [1.9.2](https://github.com/tomastrajan/options/compare/v1.9.1...v1.9.2) (2017-07-15)
+
+
+### Bug Fixes
+
+* calculator chart label values, correctly calculate greeks depending on option type and client position ([79f11c7](https://github.com/tomastrajan/options/commit/79f11c7))
+
+
+
 <a name="1.9.1"></a>
 ## [1.9.1](https://github.com/tomastrajan/options/compare/v1.9.0...v1.9.1) (2017-07-11)
 
