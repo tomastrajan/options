@@ -254,7 +254,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       expirationBase, volatility, interest, dividends);
     const currentOptionPrice = mainResult.price;
     CalculatorComponent
-      .adjustGreekValuesForPositionAndType(type, position, mainResult);
+      .adjustGreekValuesForPosition(position, mainResult);
     this.values = Object.keys(mainResult).reduce((result, key) => {
       result[key] = mainResult[key].toFixed(5);
       return result;
@@ -329,7 +329,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
         priceTheo = priceExpiry;
       }
       CalculatorComponent
-        .adjustGreekValuesForPositionAndType(type, position, resultTheo);
+        .adjustGreekValuesForPosition(position, resultTheo);
       const { delta, gamma, theta, vega, rho } = resultTheo;
       datasets[0].data[index] = priceExpiry.toFixed(5);
       datasets[1].data[index] = priceTheo.toFixed(5);
@@ -352,16 +352,8 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       && volatility !== null && interest !== null;
   }
 
-  static adjustGreekValuesForPositionAndType(type, position, values) {
-    const isBuy = position === 'buy';
-    const isCall = type === 'call';
-    if (isCall && !isBuy) {
-      values.delta = -values.delta;
-      values.gamma = -values.gamma;
-      values.theta = -values.theta;
-      values.vega = -values.vega;
-      values.rho = -values.rho;
-    } else if (!isCall && !isBuy) {
+  static adjustGreekValuesForPosition(position, values) {
+    if (position !== 'buy') {
       values.delta = -values.delta;
       values.gamma = -values.gamma;
       values.vega = -values.vega;
