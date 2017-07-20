@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.4"></a>
+## [1.9.4](https://github.com/tomastrajan/options/compare/v1.9.3...v1.9.4) (2017-07-20)
+
+
+### Bug Fixes
+
+* calculate option price based on simulated expiration price ([00b644d](https://github.com/tomastrajan/options/commit/00b644d))
+
+
+
 <a name="1.9.3"></a>
 ## [1.9.3](https://github.com/tomastrajan/options/compare/v1.9.2...v1.9.3) (2017-07-16)
 
