@@ -251,7 +251,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
     const end = strike + strikeDiff;
 
     const mainResult = this.pricing.priceOption(type, price, strike,
-      expirationBase, volatility, interest, dividends);
+      expiration, volatility, interest, dividends);
     const currentOptionPrice = mainResult.price;
     CalculatorComponent
       .adjustGreekValuesForPosition(position, mainResult);
